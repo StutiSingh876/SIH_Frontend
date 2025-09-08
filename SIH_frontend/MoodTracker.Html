@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Tracker - Mindfulmood</title>
+    <link rel="stylesheet" href="MoodTracker.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- API Client -->
+    <script src="js/api-client.js"></script>
+</head>
+<body>
+
+    <header class="page-header">
+        <div class="container">
+            <a href="index.html" class="logo">Mindfulmood</a>
+            <a href="index.html" class="back-link">Back to Home</a>
+        </div>
+    </header>
+
+    <main class="tracker-main">
+        <div class="tracker-container">
+            <h2>Track Your Daily Mood</h2>
+            <p class="mood-instructions">Select an emoji that best represents how you feel today. Tracking helps you understand your emotional patterns.</p>
+            <div class="mood-emojis">
+                <button class="mood-btn" data-mood="Awesome" title="Awesome">😊</button>
+                <button class="mood-btn" data-mood="Good" title="Good">🙂</button>
+                <button class="mood-btn" data-mood="Okay" title="Okay">😐</button>
+                <button class="mood-btn" data-mood="Bad" title="Bad">😟</button>
+                <button class="mood-btn" data-mood="Awful"title="Awful">😢</button>
+            </div>
+            <div id="mood-feedback" class="mood-feedback"></div>
+            <div id="mood-error" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4"></div>
+            
+            <!-- Mood Note Section -->
+            <div id="mood-note-section" class="hidden mt-4">
+                <label for="mood-note" class="block text-sm font-medium text-gray-700 mb-2">How are you feeling? (Optional)</label>
+                <textarea id="mood-note" placeholder="Tell us more about your mood..." class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" rows="3"></textarea>
+                <div class="mt-3 flex gap-2">
+                    <button id="save-mood" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors">Save Mood</button>
+                    <button id="cancel-mood" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-400 transition-colors">Cancel</button>
+                </div>
+            </div>
+            
+            <div class="chart-placeholder">
+                <h3 class="chart-title">Your Mood Trend</h3>
+                <p class="chart-note">Your mood chart will appear here once you start logging.</p>
+                <div id="mood-history" class="mt-4 space-y-2"></div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="page-footer">
+        <p>&copy; 2023 Mindfulmood. All rights reserved.</p>
+    </footer>
+
+    <script src="MoodTracker.js"></script>
+</body>
+</html>

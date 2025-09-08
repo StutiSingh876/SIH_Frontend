@@ -1,0 +1,210 @@
+/* Variables (Copied for consistency) */
+:root {
+    --primary-color: #6C63FF;
+    --secondary-color: #F0F2F5;
+    --text-color-dark: #333;
+    --text-color-light: #555;
+    --text-color-white: #fff;
+    --border-color: #ddd;
+    --card-bg: #fff;
+
+    --font-heading: 'Montserrat', sans-serif;
+    --font-body: 'Open Sans', sans-serif;
+}
+
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    line-height: 1.6;
+    color: var(--text-color-light);
+    background-color: var(--secondary-color);
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+a {
+    text-decoration: none;
+    color: var(--primary-color);
+    transition: color 0.3s;
+}
+a:hover {
+    color: #5a52d3;
+}
+
+/* Header (Same as tracker.css) */
+.page-header {
+    background-color: var(--card-bg);
+    padding: 15px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.page-header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.page-header .logo {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 1.5em;
+}
+
+.page-header .back-link {
+    font-weight: 600;
+    border: 2px solid var(--primary-color);
+    padding: 8px 16px;
+    border-radius: 25px;
+}
+.page-header .back-link:hover {
+    background-color: var(--primary-color);
+    color: var(--text-color-white);
+}
+
+/* Main Forum Content */
+.forum-main {
+    padding: 40px 0;
+}
+
+.forum-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+.forum-header h1 {
+    font-size: 2.5em;
+    color: var(--text-color-dark);
+}
+.forum-header p {
+    font-size: 1.1em;
+    color: var(--text-color-light);
+}
+
+.forum-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    gap: 20px;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    padding: 5px 15px;
+    flex-grow: 1;
+}
+.search-bar .search-icon {
+    color: var(--text-color-light);
+}
+.search-bar input {
+    border: none;
+    outline: none;
+    padding: 10px;
+    font-size: 1em;
+    width: 100%;
+    background: transparent;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    border: none;
+    white-space: nowrap; /* Prevents button text from wrapping */
+}
+.btn-primary {
+    background-color: var(--primary-color);
+    color: var(--text-color-white);
+}
+.btn-primary:hover {
+    background-color: #5a52d3;
+}
+.btn i {
+    margin-right: 8px;
+}
+
+/* Topic List */
+.topic-list {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.07);
+    overflow: hidden;
+}
+
+.topic-item {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid var(--secondary-color);
+    transition: background-color 0.3s;
+}
+.topic-item:not(.topic-header-row):hover {
+    background-color: #f9f9f9;
+}
+.topic-item:last-child {
+    border-bottom: none;
+}
+
+.topic-header-row {
+    background-color: #f8f9fa;
+    color: var(--text-color-dark);
+    font-weight: 600;
+    font-family: var(--font-heading);
+}
+
+.topic-title {
+    flex: 3; /* Takes up the most space */
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.topic-icon {
+    font-size: 1.5em;
+    color: var(--text-color-light);
+}
+.topic-link {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--text-color-dark);
+    display: block;
+}
+.topic-title span {
+    font-size: 0.9em;
+    color: var(--text-color-light);
+}
+
+.topic-stats {
+    flex: 0.5;
+    text-align: center;
+}
+.topic-activity {
+    flex: 1;
+    text-align: right;
+    font-size: 0.9em;
+}
+
+/* Footer (Same as tracker.css) */
+.page-footer {
+    text-align: center;
+    padding: 40px 20px 20px 20px;
+    color: var(--text-color-light);
+    font-size: 0.9em;
+}

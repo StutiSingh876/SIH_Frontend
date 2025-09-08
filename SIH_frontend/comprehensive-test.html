@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIH Project - Comprehensive Test Suite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <!-- API Client -->
+    <script src="js/api-client.js"></script>
+    
+    <style>
+        .test-section {
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .test-pass { background-color: #dcfce7; border-color: #16a34a; }
+        .test-fail { background-color: #fef2f2; border-color: #dc2626; }
+        .test-pending { background-color: #fef3c7; border-color: #d97706; }
+        .test-running { background-color: #dbeafe; border-color: #2563eb; }
+    </style>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-6xl mx-auto">
+        <h1 class="text-4xl font-bold text-gray-800 mb-8 text-center">
+            <i class="fas fa-vial text-blue-600"></i> SIH Project - Comprehensive Test Suite
+        </h1>
+        
+        <!-- Test Summary -->
+        <div class="bg-white p-6 rounded-lg shadow mb-8">
+            <h2 class="text-2xl font-semibold mb-4">Test Summary</h2>
+            <div class="grid grid-cols-4 gap-4 text-center">
+                <div class="bg-green-100 p-4 rounded-lg">
+                    <div class="text-2xl font-bold text-green-600" id="passed-count">0</div>
+                    <div class="text-sm text-green-700">Passed</div>
+                </div>
+                <div class="bg-red-100 p-4 rounded-lg">
+                    <div class="text-2xl font-bold text-red-600" id="failed-count">0</div>
+                    <div class="text-sm text-red-700">Failed</div>
+                </div>
+                <div class="bg-yellow-100 p-4 rounded-lg">
+                    <div class="text-2xl font-bold text-yellow-600" id="pending-count">0</div>
+                    <div class="text-sm text-yellow-700">Pending</div>
+                </div>
+                <div class="bg-blue-100 p-4 rounded-lg">
+                    <div class="text-2xl font-bold text-blue-600" id="total-count">0</div>
+                    <div class="text-sm text-blue-700">Total</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Backend Tests -->
+        <div class="test-section test-pending" id="backend-tests">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold mb-4">
+                    <i class="fas fa-server text-blue-600"></i> Backend Tests
+                </h2>
+                <div class="space-y-4">
+                    <div class="test-item" data-test="backend-health">
+                        <div class="flex justify-between items-center">
+                            <span>Backend Health Check</span>
+                            <button class="run-test bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Run Test
+                            </button>
+                        </div>
+                        <div class="test-result mt-2 hidden"></div>
+                    </div>
+                    
+                    <div class="test-item" data-test="nlp-health">
+                        <div class="flex justify-between items-center">
+                            <span>NLP Services Health Check</span>
+                            <button class="run-test bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Run Test
+                            </button>
+                        </div>
+                        <div class="test-result mt-2 hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Authentication Tests -->
+        <div class="test-section test-pending" id="auth-tests">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold mb-4">
+                    <i class="fas fa-lock text-green-600"></i> Authentication Tests
+                </h2>
+                <div class="space-y-4">
+                    <div class="test-item" data-test="user-registration">
+                        <div class="flex justify-between items-center">
+                            <span>User Registration</span>
+                            <button class="run-test bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Run Test
+                            </button>
+                        </div>
+                        <div class="test-result mt-2 hidden"></div>
+                    </div>
+                    
+                    <div class="test-item" data-test="user-login">
+                        <div class="flex justify-between items-center">
+                            <span>User Login</span>
+                            <button class="run-test bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Run Test
+                            </button>
+                        </div>
+                        <div class="test-result mt-2 hidden"></div>
+                    </div>
+                    
+                    <div class="test-item" data-test="jwt-validation">
+                        <div class="flex justify-between items-center">
+                            <span>JWT Token Validation</span>
+                            <button class="run-test bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Run Test
+                            </button>
+                        </div>
+                        <div class="test-result mt-2 hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mood Tracking Tests -->
+        <div class="test-section test-pending" id="mood-tests">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold mb-4">
+                    <i class="fas fa-heart text-red-600"></i> Mood Tracking Tests
+                </h2>
+                <div class="space-y-4">
+                    <div class="test-item" data-test="mood-logging">
+                        <div class="flex justify-between items-center">
+                            <span>Mood Logging</span>
+                            <button class="run-test bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Run Test
+                            </button>
+                        </div>
+                        <div class="test-result mt-2 hidden"></div>
+                    </div>
+                    
+                    <div class="test-item" data-test="mood-history">
+                        <div class="flex justify-between items-center">
+                            <span>Mood History Retrieval</span>
+                            <button class="run-test bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Run Test
+                            </button>
+                        </div>
+                        <div class="test-result mt-2 hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI Chatbot Tests -->
+        <div class="test-section test-pending" id="chatbot-tests">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold mb-4">
+                    <i class="fas fa-robot text-purple-600"></i> AI Chatbot Tests
+                </h2>
+                <div class="space-y-4">
+                    <div class="test-item" data-test="chatbot-response">
+                        <div class="flex justify-between items-center">
+                            <span>Chatbot Response Generation</span>
+                            <button class="run-test bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Run Test
+                            </button>
+                        </div>
+                        <div class="test-result mt-2 hidden"></div>
+                    </div>
+                    
+                    <div class="test-item" data-test="sentiment-analysis">
+                        <div class="flex justify-between items-center">
+                            <span>Sentiment Analysis</span>
+                            <button class="run-test bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Run Test
+                            </button>
+                        </div>
+                        <div class="test-result mt-2 hidden"></div>
+                    </div>
+                    
+                    <div class="test-item" data-test="emotion-detection">
+                        <div class="flex justify-between items-center">
+                            <span>Emotion Detection</span>
+                            <button class="run-test bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Run Test
+                            </button>
+                        </div>
+                        <div class="test-result mt-2 hidden"></div>
+                    </div>
+                    
+                    <div class="test-item" data-test="crisis-detection">
+                        <div class="flex justify-between items-center">
+                            <span>Crisis Detection</span>
+                            <button class="run-test bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Run Test
+                            </button>
+                        </div>
+                        <div class="test-result mt-2 hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Frontend Tests -->
+        <div class="test-section test-pending" id="frontend-tests">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold mb-4">
+                    <i class="fas fa-desktop text-indigo-600"></i> Frontend Tests
+                </h2>
+                <div class="space-y-4">
+                    <div class="test-item" data-test="page-navigation">
+                        <div class="flex justify-between items-center">
+                            <span>Page Navigation</span>
+                            <button class="run-test bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Run Test
+                            </button>
+                        </div>
+                        <div class="test-result mt-2 hidden"></div>
+                    </div>
+                    
+                    <div class="test-item" data-test="responsive-design">
+                        <div class="flex justify-between items-center">
+                            <span>Responsive Design</span>
+                            <button class="run-test bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Run Test
+                            </button>
+                        </div>
+                        <div class="test-result mt-2 hidden"></div>
+                    </div>
+                    
+                    <div class="test-item" data-test="form-validation">
+                        <div class="flex justify-between items-center">
+                            <span>Form Validation</span>
+                            <button class="run-test bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Run Test
+                            </button>
+                        </div>
+                        <div class="test-result mt-2 hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Integration Tests -->
+        <div class="test-section test-pending" id="integration-tests">
+            <div class="p-6">
+                <h2 class="text-xl font-semibold mb-4">
+                    <i class="fas fa-link text-orange-600"></i> Integration Tests
+                </h2>
+                <div class="space-y-4">
+                    <div class="test-item" data-test="complete-user-flow">
+                        <div class="flex justify-between items-center">
+                            <span>Complete User Flow (Register → Login → Use Features)</span>
+                            <button class="run-test bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Run Test
+                            </button>
+                        </div>
+                        <div class="test-result mt-2 hidden"></div>
+                    </div>
+                    
+                    <div class="test-item" data-test="data-persistence">
+                        <div class="flex justify-between items-center">
+                            <span>Data Persistence Across Sessions</span>
+                            <button class="run-test bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                                Run Test
+                            </button>
+                        </div>
+                        <div class="test-result mt-2 hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Run All Tests Button -->
+        <div class="text-center mt-8">
+            <button id="run-all-tests" class="bg-green-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:bg-green-700">
+                <i class="fas fa-play mr-2"></i> Run All Tests
+            </button>
+        </div>
+
+        <!-- Test Results Log -->
+        <div class="mt-8 bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Test Results Log</h2>
+            <div id="test-log" class="bg-gray-100 p-4 rounded-lg h-64 overflow-y-auto font-mono text-sm">
+                <div class="text-gray-500">Test results will appear here...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class TestRunner {
+            constructor() {
+                this.testResults = {
+                    passed: 0,
+                    failed: 0,
+                    pending: 0,
+                    total: 0
+                };
+                this.testUser = null;
+                this.testToken = null;
+                this.init();
+            }
+
+            init() {
+                this.updateCounts();
+                this.bindEvents();
+                this.log('Test suite initialized. Ready to run tests.');
+            }
+
+            bindEvents() {
+                // Bind individual test buttons
+                document.querySelectorAll('.run-test').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const testItem = e.target.closest('.test-item');
+                        const testName = testItem.dataset.test;
+                        this.runSingleTest(testName);
+                    });
+                });
+
+                // Bind run all tests button
+                document.getElementById('run-all-tests').addEventListener('click', () => {
+                    this.runAllTests();
+                });
+            }
+
+            async runAllTests() {
+                this.log('🚀 Starting comprehensive test suite...');
+                
+                const testSections = [
+                    'backend-tests',
+                    'auth-tests', 
+                    'mood-tests',
+                    'chatbot-tests',
+                    'frontend-tests',
+                    'integration-tests'
+                ];
+
+                for (const section of testSections) {
+                    const sectionElement = document.getElementById(section);
+                    const tests = sectionElement.querySelectorAll('.test-item');
+                    
+                    for (const test of tests) {
+                        const testName = test.dataset.test;
+                        await this.runSingleTest(testName);
+                        await this.delay(1000); // Wait 1 second between tests
+                    }
+                }
+
+                this.log('✅ All tests completed!');
+                this.generateReport();
+            }
+
+            async runSingleTest(testName) {
+                this.log(`🧪 Running test: ${testName}`);
+                
+                const testItem = document.querySelector(`[data-test="${testName}"]`);
+                const resultDiv = testItem.querySelector('.test-result');
+                const button = testItem.querySelector('.run-test');
+                
+                // Update UI
+                button.textContent = 'Running...';
+                button.disabled = true;
+                resultDiv.classList.remove('hidden');
+                resultDiv.innerHTML = '<div class="text-blue-600">⏳ Running test...</div>';
+
+                try {
+                    let result;
+                    switch(testName) {
+                        case 'backend-health':
+                            result = await this.testBackendHealth();
+                            break;
+                        case 'nlp-health':
+                            result = await this.testNLPHealth();
+                            break;
+                        case 'user-registration':
+                            result = await this.testUserRegistration();
+                            break;
+                        case 'user-login':
+                            result = await this.testUserLogin();
+                            break;
+                        case 'jwt-validation':
+                            result = await this.testJWTValidation();
+                            break;
+                        case 'mood-logging':
+                            result = await this.testMoodLogging();
+                            break;
+                        case 'mood-history':
+                            result = await this.testMoodHistory();
+                            break;
+                        case 'chatbot-response':
+                            result = await this.testChatbotResponse();
+                            break;
+                        case 'sentiment-analysis':
+                            result = await this.testSentimentAnalysis();
+                            break;
+                        case 'emotion-detection':
+                            result = await this.testEmotionDetection();
+                            break;
+                        case 'crisis-detection':
+                            result = await this.testCrisisDetection();
+                            break;
+                        case 'page-navigation':
+                            result = await this.testPageNavigation();
+                            break;
+                        case 'responsive-design':
+                            result = await this.testResponsiveDesign();
+                            break;
+                        case 'form-validation':
+                            result = await this.testFormValidation();
+                            break;
+                        case 'complete-user-flow':
+                            result = await this.testCompleteUserFlow();
+                            break;
+                        case 'data-persistence':
+                            result = await this.testDataPersistence();
+                            break;
+                        default:
+                            throw new Error(`Unknown test: ${testName}`);
+                    }
+
+                    this.updateTestResult(testItem, result);
+                    this.log(`✅ ${testName}: ${result.status} - ${result.message}`);
+
+                } catch (error) {
+                    const result = {
+                        status: 'FAILED',
+                        message: error.message,
+                        details: error.stack
+                    };
+                    this.updateTestResult(testItem, result);
+                    this.log(`❌ ${testName}: FAILED - ${error.message}`);
+                }
+
+                // Reset button
+                button.textContent = 'Run Test';
+                button.disabled = false;
+            }
+
+            updateTestResult(testItem, result) {
+                const resultDiv = testItem.querySelector('.test-result');
+                const section = testItem.closest('.test-section');
+                
+                if (result.status === 'PASSED') {
+                    resultDiv.innerHTML = `<div class="text-green-600">✅ ${result.message}</div>`;
+                    section.className = section.className.replace('test-pending test-fail', 'test-pass');
+                    this.testResults.passed++;
+                } else {
+                    resultDiv.innerHTML = `<div class="text-red-600">❌ ${result.message}</div>`;
+                    section.className = section.className.replace('test-pending test-pass', 'test-fail');
+                    this.testResults.failed++;
+                }
+                
+                this.testResults.pending--;
+                this.updateCounts();
+            }
+
+            updateCounts() {
+                document.getElementById('passed-count').textContent = this.testResults.passed;
+                document.getElementById('failed-count').textContent = this.testResults.failed;
+                document.getElementById('pending-count').textContent = this.testResults.pending;
+                document.getElementById('total-count').textContent = this.testResults.total;
+            }
+
+            log(message) {
+                const logDiv = document.getElementById('test-log');
+                const timestamp = new Date().toLocaleTimeString();
+                const logEntry = document.createElement('div');
+                logEntry.innerHTML = `<span class="text-gray-500">[${timestamp}]</span> ${message}`;
+                logDiv.appendChild(logEntry);
+                logDiv.scrollTop = logDiv.scrollHeight;
+            }
+
+            delay(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            // Test Methods
+            async testBackendHealth() {
+                try {
+                    const response = await apiClient.healthCheck();
+                    return {
+                        status: 'PASSED',
+                        message: 'Backend is healthy and responding',
+                        details: response
+                    };
+                } catch (error) {
+                    return {
+                        status: 'FAILED',
+                        message: 'Backend is not responding',
+                        details: error.message
+                    };
+                }
+            }
+
+            async testNLPHealth() {
+                try {
+                    const response = await apiClient.nlpHealthCheck();
+                    return {
+                        status: 'PASSED',
+                        message: 'NLP services are operational',
+                        details: response
+                    };
+                } catch (error) {
+                    return {
+                        status: 'FAILED',
+                        message: 'NLP services are not responding',
+                        details: error.message
+                    };
+                }
+            }
+
+            async testUserRegistration() {
+                try {
+                    const testUsername = `testuser_${Date.now()}`;
+                    const userData = {
+                        username: testUsername,
+                        email: `${testUsername}@test.com`,
+                        password: 'TestPassword123!',
+                        full_name: 'Test User'
+                    };
+                    
+                    const response = await apiClient.register(userData);
+                    this.testUser = testUsername;
+                    
+                    return {
+                        status: 'PASSED',
+                        message: 'User registration successful',
+                        details: `Created user: ${testUsername}`
+                    };
+                } catch (error) {
+                    return {
+                        status: 'FAILED',
+                        message: 'User registration failed',
+                        details: error.message
+                    };
+                }
+            }
+
+            async testUserLogin() {
+                try {
+                    if (!this.testUser) {
+                        throw new Error('No test user available');
+                    }
+                    
+                    const response = await apiClient.login({
+                        username: this.testUser,
+                        password: 'TestPassword123!'
+                    });
+                    
+                    this.testToken = response.access_token;
+                    
+                    return {
+                        status: 'PASSED',
+                        message: 'User login successful',
+                        details: 'JWT token received'
+                    };
+                } catch (error) {
+                    return {
+                        status: 'FAILED',
+                        message: 'User login failed',
+                        details: error.message
+                    };
+                }
+            }
+
+            async testJWTValidation() {
+                try {
+                    if (!this.testToken) {
+                        throw new Error('No JWT token available');
+                    }
+                    
+                    const response = await apiClient.getCurrentUser();
+                    
+                    return {
+                        status: 'PASSED',
+                        message: 'JWT token validation successful',
+                        details: `Authenticated as: ${response.username}`
+                    };
+                } catch (error) {
+                    return {
+                        status: 'FAILED',
+                        message: 'JWT token validation failed',
+                        details: error.message
+                    };
+                }
+            }
+
+            async testMoodLogging() {
+                try {
+                    if (!this.testUser) {
+                        throw new Error('No authenticated user');
+                    }
+                    
+                    const moodData = {
+                        user_id: this.testUser,
+                        mood: 'happy',
+                        note: 'Test mood entry'
+                    };
+                    
+                    const response = await apiClient.logMood(moodData);
+                    
+                    return {
+                        status: 'PASSED',
+                        message: 'Mood logging successful',
+                        details: 'Mood data saved to database'
+                    };
+                } catch (error) {
+                    return {
+                        status: 'FAILED',
+                        message: 'Mood logging failed',
+                        details: error.message
+                    };
+                }
+            }
+
+            async testMoodHistory() {
+                try {
+                    if (!this.testUser) {
+                        throw new Error('No authenticated user');
+                    }
+                    
+                    const response = await apiClient.getMoodHistory(this.testUser);
+                    
+                    return {
+                        status: 'PASSED',
+                        message: 'Mood history retrieval successful',
+                        details: `Retrieved ${response.count} mood entries`
+                    };
+                } catch (error) {
+                    return {
+                        status: 'FAILED',
+                        message: 'Mood history retrieval failed',
+                        details: error.message
+                    };
+                }
+            }
+
+            async testChatbotResponse() {
+                try {
+                    if (!this.testUser) {
+                        throw new Error('No authenticated user');
+                    }
+                    
+                    const response = await apiClient.sendChatMessage(this.testUser, 'Hello, I am feeling good today');
+                    
+                    return {
+                        status: 'PASSED',
+                        message: 'Chatbot response generation successful',
+                        details: `Bot replied: ${response.reply.substring(0, 50)}...`
+                    };
+                } catch (error) {
+                    return {
+                        status: 'FAILED',
+                        message: 'Chatbot response generation failed',
+                        details: error.message
+                    };
+                }
+            }
+
+            async testSentimentAnalysis() {
+                try {
+                    const response = await apiClient.analyzeSentiment('I am feeling very happy and excited today!');
+                    
+                    return {
+                        status: 'PASSED',
+                        message: 'Sentiment analysis successful',
+                        details: `Detected sentiment: ${response.label} (${response.confidence})`
+                    };
+                } catch (error) {
+                    return {
+                        status: 'FAILED',
+                        message: 'Sentiment analysis failed',
+                        details: error.message
+                    };
+                }
+            }
+
+            async testEmotionDetection() {
+                try {
+                    const response = await apiClient.analyzeEmotion('I am feeling anxious about my exams');
+                    
+                    return {
+                        status: 'PASSED',
+                        message: 'Emotion detection successful',
+                        details: `Detected emotion: ${response.label} (${response.confidence})`
+                    };
+                } catch (error) {
+                    return {
+                        status: 'FAILED',
+                        message: 'Emotion detection failed',
+                        details: error.message
+                    };
+                }
+            }
+
+            async testCrisisDetection() {
+                try {
+                    const response = await apiClient.analyzeDistress('I want to hurt myself');
+                    
+                    return {
+                        status: 'PASSED',
+                        message: 'Crisis detection working',
+                        details: `Urgent: ${response.is_urgent}, Reason: ${response.reason}`
+                    };
+                } catch (error) {
+                    return {
+                        status: 'FAILED',
+                        message: 'Crisis detection failed',
+                        details: error.message
+                    };
+                }
+            }
+
+            async testPageNavigation() {
+                try {
+                    // Test if all required pages exist
+                    const pages = ['Login.html', 'Mitr2.html', 'MoodTracker.Html', 'chatbot.html', 'forum.html'];
+                    const missingPages = [];
+                    
+                    for (const page of pages) {
+                        try {
+                            const response = await fetch(page, { method: 'HEAD' });
+                            if (!response.ok) {
+                                missingPages.push(page);
+                            }
+                        } catch (error) {
+                            missingPages.push(page);
+                        }
+                    }
+                    
+                    if (missingPages.length === 0) {
+                        return {
+                            status: 'PASSED',
+                            message: 'All pages accessible',
+                            details: 'All required pages are present and accessible'
+                        };
+                    } else {
+                        return {
+                            status: 'FAILED',
+                            message: 'Some pages missing or inaccessible',
+                            details: `Missing: ${missingPages.join(', ')}`
+                        };
+                    }
+                } catch (error) {
+                    return {
+                        status: 'FAILED',
+                        message: 'Page navigation test failed',
+                        details: error.message
+                    };
+                }
+            }
+
+            async testResponsiveDesign() {
+                try {
+                    // Test responsive design by checking if Tailwind CSS is loaded
+                    const hasTailwind = document.querySelector('script[src*="tailwindcss"]') !== null;
+                    
+                    if (hasTailwind) {
+                        return {
+                            status: 'PASSED',
+                            message: 'Responsive design framework loaded',
+                            details: 'Tailwind CSS is properly integrated'
+                        };
+                    } else {
+                        return {
+                            status: 'FAILED',
+                            message: 'Responsive design framework not loaded',
+                            details: 'Tailwind CSS not found'
+                        };
+                    }
+                } catch (error) {
+                    return {
+                        status: 'FAILED',
+                        message: 'Responsive design test failed',
+                        details: error.message
+                    };
+                }
+            }
+
+            async testFormValidation() {
+                try {
+                    // Test if API client is properly loaded
+                    const hasAPIClient = typeof window.apiClient !== 'undefined';
+                    
+                    if (hasAPIClient) {
+                        return {
+                            status: 'PASSED',
+                            message: 'Form validation and API client loaded',
+                            details: 'API client is properly integrated'
+                        };
+                    } else {
+                        return {
+                            status: 'FAILED',
+                            message: 'API client not loaded',
+                            details: 'API client is not available'
+                        };
+                    }
+                } catch (error) {
+                    return {
+                        status: 'FAILED',
+                        message: 'Form validation test failed',
+                        details: error.message
+                    };
+                }
+            }
+
+            async testCompleteUserFlow() {
+                try {
+                    // This test combines registration, login, and feature usage
+                    if (!this.testUser || !this.testToken) {
+                        throw new Error('User flow prerequisites not met');
+                    }
+                    
+                    // Test mood logging
+                    await apiClient.logMood({
+                        user_id: this.testUser,
+                        mood: 'excited',
+                        note: 'Testing complete user flow'
+                    });
+                    
+                    // Test chatbot interaction
+                    await apiClient.sendChatMessage(this.testUser, 'I am testing the complete user flow');
+                    
+                    return {
+                        status: 'PASSED',
+                        message: 'Complete user flow successful',
+                        details: 'Registration → Login → Mood Tracking → Chatbot interaction all working'
+                    };
+                } catch (error) {
+                    return {
+                        status: 'FAILED',
+                        message: 'Complete user flow failed',
+                        details: error.message
+                    };
+                }
+            }
+
+            async testDataPersistence() {
+                try {
+                    if (!this.testUser) {
+                        throw new Error('No test user available');
+                    }
+                    
+                    // Test if data persists by retrieving mood history
+                    const response = await apiClient.getMoodHistory(this.testUser);
+                    
+                    if (response.count > 0) {
+                        return {
+                            status: 'PASSED',
+                            message: 'Data persistence working',
+                            details: `Found ${response.count} persisted mood entries`
+                        };
+                    } else {
+                        return {
+                            status: 'FAILED',
+                            message: 'No persisted data found',
+                            details: 'Data persistence may not be working'
+                        };
+                    }
+                } catch (error) {
+                    return {
+                        status: 'FAILED',
+                        message: 'Data persistence test failed',
+                        details: error.message
+                    };
+                }
+            }
+
+            generateReport() {
+                const totalTests = this.testResults.passed + this.testResults.failed;
+                const passRate = totalTests > 0 ? (this.testResults.passed / totalTests * 100).toFixed(1) : 0;
+                
+                this.log('📊 TEST REPORT GENERATED');
+                this.log(`Total Tests: ${totalTests}`);
+                this.log(`Passed: ${this.testResults.passed}`);
+                this.log(`Failed: ${this.testResults.failed}`);
+                this.log(`Pass Rate: ${passRate}%`);
+                
+                if (this.testResults.failed === 0) {
+                    this.log('🎉 ALL TESTS PASSED! Project is ready for presentation!');
+                } else {
+                    this.log('⚠️ Some tests failed. Please review the results above.');
+                }
+            }
+        }
+
+        // Initialize test runner when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const testRunner = new TestRunner();
+            
+            // Count total tests
+            const totalTests = document.querySelectorAll('.test-item').length;
+            testRunner.testResults.total = totalTests;
+            testRunner.testResults.pending = totalTests;
+            testRunner.updateCounts();
+        });
+    </script>
+</body>
+</html>

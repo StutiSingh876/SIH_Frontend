@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integration Test - SIH Frontend</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    
+    <!-- API Client -->
+    <script src="js/api-client.js"></script>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">SIH Integration Test</h1>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Backend Health Check -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4">Backend Health Check</h2>
+                <button id="health-check" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    Test Backend Connection
+                </button>
+                <div id="health-result" class="mt-4 p-4 rounded hidden"></div>
+            </div>
+
+            <!-- Authentication Test -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4">Authentication Test</h2>
+                <div class="space-y-3">
+                    <input type="text" id="test-username" placeholder="Username" class="w-full p-2 border rounded">
+                    <input type="password" id="test-password" placeholder="Password" class="w-full p-2 border rounded">
+                    <button id="test-login" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                        Test Login
+                    </button>
+                </div>
+                <div id="auth-result" class="mt-4 p-4 rounded hidden"></div>
+            </div>
+
+            <!-- Mood Tracking Test -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4">Mood Tracking Test</h2>
+                <div class="space-y-3">
+                    <select id="test-mood" class="w-full p-2 border rounded">
+                        <option value="happy">Happy</option>
+                        <option value="sad">Sad</option>
+                        <option value="anxious">Anxious</option>
+                        <option value="excited">Excited</option>
+                    </select>
+                    <textarea id="test-note" placeholder="Mood note" class="w-full p-2 border rounded" rows="3"></textarea>
+                    <button id="test-mood-log" class="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700">
+                        Test Mood Logging
+                    </button>
+                </div>
+                <div id="mood-result" class="mt-4 p-4 rounded hidden"></div>
+            </div>
+
+            <!-- Chatbot Test -->
+            <div class="bg-white p-6 rounded-lg shadow">
+                <h2 class="text-xl font-semibold mb-4">Chatbot Test</h2>
+                <div class="space-y-3">
+                    <input type="text" id="test-message" placeholder="Test message" class="w-full p-2 border rounded">
+                    <button id="test-chatbot" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
+                        Test Chatbot
+                    </button>
+                </div>
+                <div id="chatbot-result" class="mt-4 p-4 rounded hidden"></div>
+            </div>
+        </div>
+
+        <!-- Test Results Summary -->
+        <div class="mt-8 bg-white p-6 rounded-lg shadow">
+            <h2 class="text-xl font-semibold mb-4">Test Results Summary</h2>
+            <div id="test-summary" class="space-y-2">
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-circle text-gray-400"></i>
+                    <span>Backend Health: <span id="health-status">Not tested</span></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-circle text-gray-400"></i>
+                    <span>Authentication: <span id="auth-status">Not tested</span></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-circle text-gray-400"></i>
+                    <span>Mood Tracking: <span id="mood-status">Not tested</span></span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-circle text-gray-400"></i>
+                    <span>Chatbot: <span id="chatbot-status">Not tested</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Health check test
+            document.getElementById('health-check').addEventListener('click', async () => {
+                const resultDiv = document.getElementById('health-result');
+                const statusSpan = document.getElementById('health-status');
+                
+                try {
+                    const response = await apiClient.healthCheck();
+                    resultDiv.className = 'mt-4 p-4 rounded bg-green-100 text-green-800';
+                    resultDiv.textContent = `Backend is healthy! Response: ${JSON.stringify(response)}`;
+                    statusSpan.textContent = '✅ Working';
+                    statusSpan.parentElement.querySelector('i').className = 'fas fa-circle text-green-500';
+                } catch (error) {
+                    resultDiv.className = 'mt-4 p-4 rounded bg-red-100 text-red-800';
+                    resultDiv.textContent = `Backend connection failed: ${error.message}`;
+                    statusSpan.textContent = '❌ Failed';
+                    statusSpan.parentElement.querySelector('i').className = 'fas fa-circle text-red-500';
+                }
+                resultDiv.classList.remove('hidden');
+            });
+
+            // Authentication test
+            document.getElementById('test-login').addEventListener('click', async () => {
+                const username = document.getElementById('test-username').value;
+                const password = document.getElementById('test-password').value;
+                const resultDiv = document.getElementById('auth-result');
+                const statusSpan = document.getElementById('auth-status');
+                
+                if (!username || !password) {
+                    resultDiv.className = 'mt-4 p-4 rounded bg-yellow-100 text-yellow-800';
+                    resultDiv.textContent = 'Please enter username and password';
+                    resultDiv.classList.remove('hidden');
+                    return;
+                }
+                
+                try {
+                    const response = await apiClient.login({ username, password });
+                    resultDiv.className = 'mt-4 p-4 rounded bg-green-100 text-green-800';
+                    resultDiv.textContent = `Login successful! Token received.`;
+                    statusSpan.textContent = '✅ Working';
+                    statusSpan.parentElement.querySelector('i').className = 'fas fa-circle text-green-500';
+                } catch (error) {
+                    resultDiv.className = 'mt-4 p-4 rounded bg-red-100 text-red-800';
+                    resultDiv.textContent = `Login failed: ${error.message}`;
+                    statusSpan.textContent = '❌ Failed';
+                    statusSpan.parentElement.querySelector('i').className = 'fas fa-circle text-red-500';
+                }
+                resultDiv.classList.remove('hidden');
+            });
+
+            // Mood tracking test
+            document.getElementById('test-mood-log').addEventListener('click', async () => {
+                const mood = document.getElementById('test-mood').value;
+                const note = document.getElementById('test-note').value;
+                const resultDiv = document.getElementById('mood-result');
+                const statusSpan = document.getElementById('mood-status');
+                
+                if (!authUtils.isLoggedIn()) {
+                    resultDiv.className = 'mt-4 p-4 rounded bg-yellow-100 text-yellow-800';
+                    resultDiv.textContent = 'Please login first to test mood tracking';
+                    resultDiv.classList.remove('hidden');
+                    return;
+                }
+                
+                try {
+                    const userData = JSON.parse(localStorage.getItem('current_user'));
+                    const moodData = {
+                        user_id: userData.username,
+                        mood: mood,
+                        note: note || null
+                    };
+                    
+                    const response = await apiClient.logMood(moodData);
+                    resultDiv.className = 'mt-4 p-4 rounded bg-green-100 text-green-800';
+                    resultDiv.textContent = `Mood logged successfully! Response: ${JSON.stringify(response)}`;
+                    statusSpan.textContent = '✅ Working';
+                    statusSpan.parentElement.querySelector('i').className = 'fas fa-circle text-green-500';
+                } catch (error) {
+                    resultDiv.className = 'mt-4 p-4 rounded bg-red-100 text-red-800';
+                    resultDiv.textContent = `Mood logging failed: ${error.message}`;
+                    statusSpan.textContent = '❌ Failed';
+                    statusSpan.parentElement.querySelector('i').className = 'fas fa-circle text-red-500';
+                }
+                resultDiv.classList.remove('hidden');
+            });
+
+            // Chatbot test
+            document.getElementById('test-chatbot').addEventListener('click', async () => {
+                const message = document.getElementById('test-message').value;
+                const resultDiv = document.getElementById('chatbot-result');
+                const statusSpan = document.getElementById('chatbot-status');
+                
+                if (!message) {
+                    resultDiv.className = 'mt-4 p-4 rounded bg-yellow-100 text-yellow-800';
+                    resultDiv.textContent = 'Please enter a test message';
+                    resultDiv.classList.remove('hidden');
+                    return;
+                }
+                
+                if (!authUtils.isLoggedIn()) {
+                    resultDiv.className = 'mt-4 p-4 rounded bg-yellow-100 text-yellow-800';
+                    resultDiv.textContent = 'Please login first to test chatbot';
+                    resultDiv.classList.remove('hidden');
+                    return;
+                }
+                
+                try {
+                    const userData = JSON.parse(localStorage.getItem('current_user'));
+                    const response = await apiClient.sendChatMessage(userData.username, message);
+                    resultDiv.className = 'mt-4 p-4 rounded bg-green-100 text-green-800';
+                    resultDiv.innerHTML = `
+                        <strong>Chatbot Response:</strong><br>
+                        ${response.reply}<br><br>
+                        <strong>Analysis:</strong><br>
+                        ${response.analysis ? JSON.stringify(response.analysis, null, 2) : 'No analysis available'}
+                    `;
+                    statusSpan.textContent = '✅ Working';
+                    statusSpan.parentElement.querySelector('i').className = 'fas fa-circle text-green-500';
+                } catch (error) {
+                    resultDiv.className = 'mt-4 p-4 rounded bg-red-100 text-red-800';
+                    resultDiv.textContent = `Chatbot test failed: ${error.message}`;
+                    statusSpan.textContent = '❌ Failed';
+                    statusSpan.parentElement.querySelector('i').className = 'fas fa-circle text-red-500';
+                }
+                resultDiv.classList.remove('hidden');
+            });
+        });
+    </script>
+</body>
+</html>

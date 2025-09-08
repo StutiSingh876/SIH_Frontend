@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discussion Forum - Mindfulmood</title>
+    <link rel="stylesheet" href="forum.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- API Client -->
+    <script src="js/api-client.js"></script>
+</head>
+<body>
+
+    <header class="page-header">
+        <div class="container">
+            <a href="Miter2.html" class="logo">Mindfulmood</a>
+            <a href="Mitr2.html" class="back-link">Back to Home</a>
+        </div>
+    </header>
+
+    <main class="forum-main">
+        <div class="container">
+            <div class="forum-header">
+                <h1>Student Discussion Forum</h1>
+                <p>A safe space to share experiences and support each other.</p>
+            </div>
+
+            <div class="forum-actions">
+                <div class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" placeholder="Search topics...">
+                </div>
+                <button id="new-discussion-btn" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> Start New Discussion
+                </button>
+            </div>
+
+            <div class="topic-list">
+                <div class="topic-item topic-header-row">
+                    <div class="topic-title">Topic</div>
+                    <div class="topic-stats">Replies</div>
+                    <div class="topic-activity">Last Activity</div>
+                </div>
+
+                <div class="topic-item">
+                    <div class="topic-title">
+                        <i class="fa-regular fa-comments topic-icon"></i>
+                        <div>
+                            <a href="#" class="topic-link">How do you cope with exam stress?</a>
+                            <span>by <a href="#" class="author-link">Anonymous User</a></span>
+                        </div>
+                    </div>
+                    <div class="topic-stats">15</div>
+                    <div class="topic-activity">Today, 10:30 PM</div>
+                </div>
+
+                <div class="topic-item">
+                    <div class="topic-title">
+                        <i class="fa-regular fa-comments topic-icon"></i>
+                        <div>
+                            <a href="#" class="topic-link">Tips for balancing studies and social life</a>
+                            <span>by <a href="#" class="author-link">Jane D.</a></span>
+                        </div>
+                    </div>
+                    <div class="topic-stats">8</div>
+                    <div class="topic-activity">Yesterday, 5:14 PM</div>
+                </div>
+                
+                <div class="topic-item">
+                    <div class="topic-title">
+                        <i class="fa-regular fa-comments topic-icon"></i>
+                        <div>
+                            <a href="#" class="topic-link">Feeling homesick - anyone else?</a>
+                            <span>by <a href="#" class="author-link">Anonymous User</a></span>
+                        </div>
+                    </div>
+                    <div class="topic-stats">22</div>
+                    <div class="topic-activity">Yesterday, 11:20 AM</div>
+                </div>
+
+                <div class="topic-item">
+                    <div class="topic-title">
+                        <i class="fa-regular fa-comments topic-icon"></i>
+                        <div>
+                            <a href="#" class="topic-link">Great resources for mindfulness and meditation</a>
+                            <span>by <a href="#" class="author-link">Admin</a></span>
+                        </div>
+                    </div>
+                    <div class="topic-stats">5</div>
+                    <div class="topic-activity">Sep 05, 2025</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="page-footer">
+        <p>&copy; 2023 Mindfulmood. All rights reserved.</p>
+    </footer>
+
+    <script src="forum.js"></script>
+</body>
+</html>
