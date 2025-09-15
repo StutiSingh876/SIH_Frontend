@@ -8,8 +8,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     
-    <!-- API Client -->
+    <!-- API Client and Gamification -->
     <script src="js/api-client.js"></script>
+    <script src="js/gamification.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -43,18 +44,25 @@
 
     <header id="header" class="bg-white/80 backdrop-blur-lg fixed top-0 left-0 right-0 z-50 transition-shadow duration-300">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold text-blue-600">Mitr</a>
+            <a href="#" class="text-2xl font-bold text-blue-600">MindCare</a>
             <nav class="hidden md:flex items-center space-x-8">
                 <a href="#features" class="text-slate-600 hover:text-blue-600 transition-colors">Features</a>
                 <a href="#how-it-works" class="text-slate-600 hover:text-blue-600 transition-colors">How It Works</a>
                 <a href="#motivation" class="text-slate-600 hover:text-blue-600 transition-colors">Motivation</a>
             </nav>
             
-            <div class="flex items-center gap-4">
-                <span id="user-welcome" class="text-sm text-gray-600 hidden md:block">Welcome!</span>
-                <button id="logout-btn" class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-red-700 transition-colors">
-                    <i class="fas fa-sign-out-alt mr-1"></i>Logout
-                </button>
+            <!-- Gamification Display -->
+            <div class="hidden md:flex items-center space-x-4 mr-4">
+                <div class="flex items-center space-x-2 bg-white/90 px-3 py-2 rounded-full shadow-sm">
+                    <i class="fas fa-star text-yellow-500"></i>
+                    <span id="user-xp" class="font-semibold text-slate-700">0</span>
+                    <span class="text-slate-500 text-sm">XP</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-white/90 px-3 py-2 rounded-full shadow-sm">
+                    <i class="fas fa-trophy text-purple-500"></i>
+                    <span id="user-level" class="font-semibold text-slate-700">1</span>
+                    <span class="text-slate-500 text-sm">Level</span>
+                </div>
             </div>
             
             <div class="hidden md:block relative">
@@ -63,9 +71,10 @@
                 </button>
                 <div id="desktop-dropdown-menu" class="hidden absolute right-0 mt-2 w-56 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10">
                     <div class="py-1">
-                        <a href="" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">AI-Powered Chatbot</a>
-                        <a href="" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">College Specialized</a>
                         <a href="" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">SOS Emergency Trigger</a>
+                        <a href="chatbot.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">AI-Powered Chatbot</a>
+                        <a href="" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">College Specialized</a>
+                        
                         <a href="" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Student Feedback</a>
                         <a href="" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Teacher's input</a>
                     </div>
@@ -86,10 +95,10 @@
                 </button>
                 <div id="mobile-dropdown-menu" class="hidden mt-2 w-full bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-10">
                     <div class="py-1">
-                        <a href="" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">AI-Powered Chatbot</a>
-                        <a href="" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Mood Tracking</a>
+                        <a href="chatbot.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">AI-Powered Chatbot</a>
+                        <a href="MoodTracker.Html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Mood Tracking</a>
                         <a href="" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">SOS Emergency Trigger</a>
-                        <a href="" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Peer Forum</a>
+                        <a href="forum.html" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Peer Forum</a>
                         <a href="" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100">Student Feedback</a>
                     </div>
                 </div>
@@ -105,6 +114,74 @@
                     <p class="mt-6 text-lg text-slate-600">A safe space designed for students to navigate academic stress, connect with peers, and prioritize mental well-being. Anonymously and securely.</p>
                     <div class="mt-10">
                         <a href="#features" class="bg-blue-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-blue-700 transition-all shadow-lg hover:shadow-xl">Explore Features</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Progress Section -->
+        <section class="py-16 bg-white">
+            <div class="container mx-auto px-6">
+                <div class="max-w-4xl mx-auto">
+                    <h2 class="text-3xl font-bold text-center text-slate-800 mb-12">Your Wellness Journey</h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <!-- Weekly Progress -->
+                        <div class="bg-gradient-to-br from-blue-50 to-indigo-100 p-6 rounded-xl">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-semibold text-slate-800">This Week's Progress</h3>
+                                <i class="fas fa-calendar-week text-blue-500 text-xl"></i>
+                            </div>
+                            <div class="mb-4">
+                                <div class="w-full bg-white rounded-full h-3 mb-2">
+                                    <div id="weekly-progress-bar" class="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500" style="width: 0%"></div>
+                                </div>
+                                <p id="weekly-progress-text" class="text-sm text-slate-600">0/7 days completed</p>
+                            </div>
+                            <div class="flex justify-between text-sm text-slate-600">
+                                <span>Mon</span>
+                                <span>Tue</span>
+                                <span>Wed</span>
+                                <span>Thu</span>
+                                <span>Fri</span>
+                                <span>Sat</span>
+                                <span>Sun</span>
+                            </div>
+                        </div>
+
+                        <!-- Achievements -->
+                        <div class="bg-gradient-to-br from-green-50 to-emerald-100 p-6 rounded-xl">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-xl font-semibold text-slate-800">Recent Achievements</h3>
+                                <i class="fas fa-trophy text-green-500 text-xl"></i>
+                            </div>
+                            <div id="achievement-container" class="space-y-2 max-h-32 overflow-y-auto">
+                                <div class="text-center text-slate-500 py-4">
+                                    <i class="fas fa-medal text-2xl mb-2"></i>
+                                    <p>Complete actions to earn achievements!</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="text-center bg-slate-50 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-blue-600" id="total-moods">0</div>
+                            <div class="text-sm text-slate-600">Moods Tracked</div>
+                        </div>
+                        <div class="text-center bg-slate-50 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-green-600" id="ai-chats">0</div>
+                            <div class="text-sm text-slate-600">AI Conversations</div>
+                        </div>
+                        <div class="text-center bg-slate-50 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-purple-600" id="current-streak">0</div>
+                            <div class="text-sm text-slate-600">Day Streak</div>
+                        </div>
+                        <div class="text-center bg-slate-50 p-4 rounded-lg">
+                            <div class="text-2xl font-bold text-orange-600" id="total-achievements">0</div>
+                            <div class="text-sm text-slate-600">Achievements</div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -165,8 +242,8 @@
                             <div class="bg-yellow-100 text-yellow-600 w-12 h-12 rounded-lg flex items-center justify-center">
                                 <i class="fas fa-gem text-2xl"></i>
                             </div>
-                            <h4 class="font-bold text-xl mt-4">Your badges</h4>
-                            <p class="text-slate-600 mt-2">Streaks, badges, and wellness challenges motivate you to engage consistently and celebrate your progress.</p>
+                            <h4 class="font-bold text-xl mt-4">Confidential Booking System</h4>
+                            <p class="text-slate-600 mt-2">For appointment with on-campus counsellor or mental health helpline.</p>
                         </div>
                     </a>
 
@@ -256,7 +333,7 @@
         <div class="container mx-auto px-6 py-12">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
-                    <h3 class="text-xl font-bold text-white">Mitr</h3>
+                    <h3 class="text-xl font-bold text-white">MindCare</h3>
                     <p class="mt-2 text-sm">Your Campus Wellness Companion.</p>
                 </div>
                 <div>
@@ -292,33 +369,6 @@
 
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Check if user is logged in
-            if (!authUtils.isLoggedIn()) {
-                window.location.href = 'Login.html';
-                return;
-            }
-
-            // Get user info and display welcome message
-            try {
-                const userData = JSON.parse(localStorage.getItem('current_user'));
-                const welcomeElement = document.getElementById('user-welcome');
-                if (welcomeElement && userData.username) {
-                    welcomeElement.textContent = `Welcome, ${userData.username}!`;
-                }
-            } catch (error) {
-                console.error('Error getting user info:', error);
-            }
-
-            // Logout button handler
-            const logoutBtn = document.getElementById('logout-btn');
-            logoutBtn.addEventListener('click', () => {
-                if (confirm('Are you sure you want to logout?')) {
-                    authUtils.logout();
-                }
-            });
-        });
-
         // Mobile menu toggle
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
@@ -399,6 +449,79 @@
             }
         });
         // END: Dropdown Menu Logic
+
+        // Gamification Initialization
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // Check if user is logged in
+                const token = localStorage.getItem('auth_token');
+                if (!token) {
+                    console.log('User not logged in, skipping gamification initialization');
+                    return;
+                }
+
+                // Initialize gamification
+                if (window.gamification) {
+                    await window.gamification.init();
+                    
+                    // Load additional stats
+                    await loadAdditionalStats();
+                }
+            } catch (error) {
+                console.error('Failed to initialize gamification:', error);
+            }
+        });
+
+        async function loadAdditionalStats() {
+            try {
+                const currentUser = await window.apiClient.getCurrentUser();
+                if (!currentUser) return;
+
+                // Load mood count
+                const moodHistory = await window.apiClient.getMoodHistory(currentUser.username);
+                document.getElementById('total-moods').textContent = moodHistory.length || 0;
+
+                // Load streak
+                const streak = await window.apiClient.getStreak(currentUser.username);
+                document.getElementById('current-streak').textContent = streak.streak || 0;
+
+                // Load achievements count
+                const achievements = await window.apiClient.getUserAchievements(currentUser.username);
+                document.getElementById('total-achievements').textContent = achievements.total_achievements || 0;
+
+                // Load AI chats count (mock for now)
+                document.getElementById('ai-chats').textContent = '0';
+
+            } catch (error) {
+                console.error('Failed to load additional stats:', error);
+            }
+        }
+
+        // Add click handlers for gamification actions
+        function addGamificationHandlers() {
+            // Add handlers for mood tracking
+            const moodButtons = document.querySelectorAll('[data-gamification-action="mood_logged"]');
+            moodButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    if (window.gamification) {
+                        window.gamification.handleMoodLogged();
+                    }
+                });
+            });
+
+            // Add handlers for AI chat
+            const aiButtons = document.querySelectorAll('[data-gamification-action="ai_chat"]');
+            aiButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    if (window.gamification) {
+                        window.gamification.handleAIChat();
+                    }
+                });
+            });
+        }
+
+        // Initialize gamification handlers
+        addGamificationHandlers();
 
     </script>
 </body>

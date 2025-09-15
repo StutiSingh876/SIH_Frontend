@@ -37,6 +37,7 @@ Open `http://localhost:3000/test-integration.html` to run comprehensive integrat
 ### ✅ Mood Tracking
 - **Mood Logging**: Real-time mood tracking with backend storage
 - **Mood History**: Display of past mood entries
+- **🗑️ Mood Deletion**: Delete unwanted mood entries with confirmation
 - **Notes**: Optional mood notes with each entry
 - **Data Persistence**: All mood data saved to MongoDB
 
@@ -96,6 +97,9 @@ await apiClient.logMood({
 
 // Get mood history
 await apiClient.getMoodHistory("user123");
+
+// Delete a mood log
+await apiClient.deleteMood("mood_id_here");
 ```
 
 ### Chatbot Endpoints
@@ -114,7 +118,7 @@ await apiClient.getChatHistory("user123", 10);
 2. Register a new account
 3. Login with your credentials
 4. Navigate to different features:
-   - Mood Tracker: Log moods and view history
+   - Mood Tracker: Log moods, view history, and delete entries
    - AI Chatbot: Chat with the AI assistant
    - Forum: Browse the discussion forum
 
@@ -192,6 +196,7 @@ Open browser developer tools (F12) to see:
 | User Login | ✅ Complete | `/auth/login` | Login.html |
 | Mood Logging | ✅ Complete | `POST /moods/` | MoodTracker.js |
 | Mood History | ✅ Complete | `GET /moods/{user_id}` | MoodTracker.js |
+| Mood Deletion | ✅ Complete | `DELETE /moods/{mood_id}` | MoodTracker.js |
 | AI Chatbot | ✅ Complete | `POST /nlp/chatbot` | chatbot.html |
 | Sentiment Analysis | ✅ Complete | `POST /nlp/sentiment` | chatbot.html |
 | Conversation History | ✅ Complete | `GET /nlp/chatbot/history/{user_id}` | chatbot.html |

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Fetch Issues</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug Fetch Issues</h1>
+    
+    <div class="test-section info">
+        <h3>Backend Status</h3>
+        <button onclick="testBackendHealth()">Test Backend Health</button>
+        <div id="backend-result"></div>
+    </div>
+
+    <div class="test-section info">
+        <h3>CORS Test</h3>
+        <button onclick="testCORS()">Test CORS Headers</button>
+        <div id="cors-result"></div>
+    </div>
+
+    <div class="test-section info">
+        <h3>Authentication Test</h3>
+        <button onclick="testAuth()">Test Login</button>
+        <div id="auth-result"></div>
+    </div>
+
+    <div class="test-section info">
+        <h3>Mood History Test</h3>
+        <button onclick="testMoodHistory()">Test Mood History Fetch</button>
+        <div id="mood-result"></div>
+    </div>
+
+    <div class="test-section info">
+        <h3>Network Debug</h3>
+        <button onclick="debugNetwork()">Debug Network Issues</button>
+        <div id="network-result"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8000';
+        let authToken = null;
+
+        function log(elementId, message, isError = false) {
+            const element = document.getElementById(elementId);
+            const className = isError ? 'error' : 'success';
+            element.innerHTML = `<div class="${className}">${message}</div>`;
+        }
+
+        function logInfo(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="info">${message}</div>`;
+        }
+
+        async function testBackendHealth() {
+            try {
+                logInfo('backend-result', 'Testing backend health...');
+                const response = await fetch(`${API_BASE}/`);
+                const data = await response.json();
+                log('backend-result', `✅ Backend is healthy!<br><pre>${JSON.stringify(data, null, 2)}</pre>`);
+            } catch (error) {
+                log('backend-result', `❌ Backend health check failed: ${error.message}`, true);
+            }
+        }
+
+        async function testCORS() {
+            try {
+                logInfo('cors-result', 'Testing CORS headers...');
+                const response = await fetch(`${API_BASE}/moods/test`, {
+                    method: 'OPTIONS'
+                });
+                
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers'),
+                };
+                
+                log('cors-result', `✅ CORS Headers:<br><pre>${JSON.stringify(corsHeaders, null, 2)}</pre>`);
+            } catch (error) {
+                log('cors-result', `❌ CORS test failed: ${error.message}`, true);
+            }
+        }
+
+        async function testAuth() {
+            try {
+                logInfo('auth-result', 'Testing authentication...');
+                
+                // Try to register first
+                const registerData = {
+                    username: 'testuser' + Date.now(),
+                    email: 'test' + Date.now() + '@example.com',
+                    password: 'testpass123',
+                    full_name: 'Test User'
+                };
+                
+                const registerResponse = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(registerData)
+                });
+                
+                if (registerResponse.ok) {
+                    log('auth-result', '✅ Registration successful!');
+                } else {
+                    const errorData = await registerResponse.json();
+                    log('auth-result', `⚠️ Registration failed: ${errorData.detail || 'Unknown error'}`);
+                }
+                
+                // Try to login
+                const loginData = {
+                    username: registerData.username,
+                    password: registerData.password
+                };
+                
+                const loginResponse = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(loginData)
+                });
+                
+                if (loginResponse.ok) {
+                    const loginResult = await loginResponse.json();
+                    authToken = loginResult.access_token;
+                    log('auth-result', `✅ Login successful! Token: ${authToken.substring(0, 20)}...`);
+                } else {
+                    const errorData = await loginResponse.json();
+                    log('auth-result', `❌ Login failed: ${errorData.detail || 'Unknown error'}`, true);
+                }
+                
+            } catch (error) {
+                log('auth-result', `❌ Auth test failed: ${error.message}`, true);
+            }
+        }
+
+        async function testMoodHistory() {
+            if (!authToken) {
+                log('mood-result', '❌ No auth token. Please test authentication first.', true);
+                return;
+            }
+            
+            try {
+                logInfo('mood-result', 'Testing mood history fetch...');
+                
+                const response = await fetch(`${API_BASE}/moods/testuser`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log('mood-result', `✅ Mood history fetch successful!<br><pre>${JSON.stringify(data, null, 2)}</pre>`);
+                } else {
+                    const errorData = await response.json();
+                    log('mood-result', `❌ Mood history fetch failed: ${errorData.detail || 'Unknown error'}`, true);
+                }
+                
+            } catch (error) {
+                log('mood-result', `❌ Mood history test failed: ${error.message}`, true);
+            }
+        }
+
+        async function debugNetwork() {
+            logInfo('network-result', 'Debugging network issues...');
+            
+            const tests = [
+                { name: 'Basic Fetch', url: `${API_BASE}/` },
+                { name: 'CORS Preflight', url: `${API_BASE}/moods/test`, method: 'OPTIONS' },
+                { name: 'Auth Endpoint', url: `${API_BASE}/auth/login`, method: 'POST', body: '{}' }
+            ];
+            
+            let results = [];
+            
+            for (const test of tests) {
+                try {
+                    const options = {
+                        method: test.method || 'GET',
+                        headers: { 'Content-Type': 'application/json' }
+                    };
+                    
+                    if (test.body) {
+                        options.body = test.body;
+                    }
+                    
+                    const response = await fetch(test.url, options);
+                    results.push(`✅ ${test.name}: ${response.status} ${response.statusText}`);
+                } catch (error) {
+                    results.push(`❌ ${test.name}: ${error.message}`);
+                }
+            }
+            
+            log('network-result', `Network Debug Results:<br><pre>${results.join('\n')}</pre>`);
+        }
+
+        // Auto-run backend health check on load
+        window.onload = function() {
+            testBackendHealth();
+        };
+    </script>
+</body>
+</html>

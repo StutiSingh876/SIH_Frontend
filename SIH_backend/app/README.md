@@ -22,7 +22,7 @@ This directory contains the main application logic for the MindCare mental healt
 ### Routes Directory
 The `routes/` subdirectory contains API endpoint definitions:
 - **auth.py** - User authentication endpoints
-- **moods.py** - Mood tracking endpoints
+- **moods.py** - Mood tracking endpoints (create, read, delete)
 - **chatbot.py** - Basic chatbot endpoints
 - **gamify.py** - Gamification and streak tracking
 - **nlp.py** - Advanced AI analysis endpoints

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CORS Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">CORS Test</h1>
+        
+        <div class="bg-white p-4 rounded shadow mb-4">
+            <h2 class="text-lg font-semibold mb-2">Test CORS</h2>
+            <button id="test-cors" class="bg-blue-500 text-white px-4 py-2 rounded">Test CORS</button>
+            <div id="cors-result" class="mt-4 p-4 bg-gray-100 rounded hidden"></div>
+        </div>
+
+        <div class="bg-white p-4 rounded shadow">
+            <h2 class="text-lg font-semibold mb-2">Console Log</h2>
+            <div id="console" class="bg-gray-900 text-green-400 p-4 rounded font-mono text-sm h-40 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            console.innerHTML += `[${timestamp}] ${message}\n`;
+            console.scrollTop = console.scrollHeight;
+        }
+
+        document.getElementById('test-cors').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('cors-result');
+            
+            try {
+                log('Testing CORS with simple GET request...');
+                
+                // Test 1: Simple GET request
+                const response1 = await fetch('http://localhost:8000/');
+                const data1 = await response1.json();
+                log(`Simple GET success: ${JSON.stringify(data1)}`);
+                
+                // Test 2: GET with headers
+                log('Testing GET with headers...');
+                const response2 = await fetch('http://localhost:8000/moods/testuser', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer test-token'
+                    }
+                });
+                
+                log(`GET with headers status: ${response2.status}`);
+                const data2 = await response2.text();
+                log(`GET with headers response: ${data2}`);
+                
+                // Test 3: OPTIONS request
+                log('Testing OPTIONS request...');
+                const response3 = await fetch('http://localhost:8000/moods/testuser', {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': 'http://localhost:3000',
+                        'Access-Control-Request-Method': 'GET',
+                        'Access-Control-Request-Headers': 'authorization,content-type'
+                    }
+                });
+                
+                log(`OPTIONS status: ${response3.status}`);
+                log(`OPTIONS headers: ${JSON.stringify([...response3.headers.entries()])}`);
+                
+                resultDiv.className = 'mt-4 p-4 bg-green-100 text-green-800 rounded';
+                resultDiv.textContent = 'CORS test completed - check console for details';
+                
+            } catch (error) {
+                log(`CORS test failed: ${error.message}`);
+                resultDiv.className = 'mt-4 p-4 bg-red-100 text-red-800 rounded';
+                resultDiv.textContent = `CORS test failed: ${error.message}`;
+            }
+            
+            resultDiv.classList.remove('hidden');
+        });
+
+        // Initialize
+        log('CORS test page loaded');
+    </script>
+</body>
+</html>

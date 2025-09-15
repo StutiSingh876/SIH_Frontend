@@ -5,7 +5,7 @@
 
 class APIClient {
     constructor() {
-        this.baseURL = 'http://localhost:8000';
+        this.baseURL = 'http://127.0.0.1:8000';
         this.token = localStorage.getItem('auth_token');
     }
 
@@ -116,6 +116,12 @@ class APIClient {
         return this.makeRequest(`/moods/${userId}`);
     }
 
+    async deleteMood(moodId) {
+        return this.makeRequest(`/moods/${moodId}`, {
+            method: 'DELETE'
+        });
+    }
+
     // NLP Analysis Methods
     async analyzeSentiment(text) {
         return this.makeRequest('/nlp/sentiment', {
@@ -179,6 +185,32 @@ class APIClient {
 
     async getStreak(userId) {
         return this.makeRequest(`/gamify/streak/${userId}`);
+    }
+
+    // XP and Progress Methods
+    async addXP(userId, action, xpAmount, description) {
+        return this.makeRequest(`/gamify/xp/add/${userId}`, {
+            method: 'POST',
+            body: JSON.stringify({
+                action: action,
+                xp_amount: xpAmount,
+                description: description
+            })
+        });
+    }
+
+    async getUserProgress(userId) {
+        return this.makeRequest(`/gamify/progress/${userId}`);
+    }
+
+    async getUserAchievements(userId) {
+        return this.makeRequest(`/gamify/achievements/${userId}`);
+    }
+
+    async checkAchievements(userId) {
+        return this.makeRequest(`/gamify/achievements/check/${userId}`, {
+            method: 'POST'
+        });
     }
 
     // Health Check

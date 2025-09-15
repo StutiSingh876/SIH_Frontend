@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Test</title>
+</head>
+<body>
+    <h1>Simple Backend Test</h1>
+    <button onclick="testBackend()">Test Backend</button>
+    <div id="result"></div>
+
+    <script>
+        async function testBackend() {
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                console.log('Testing backend connection...');
+                const response = await fetch('http://localhost:8000/');
+                const data = await response.json();
+                console.log('Backend response:', data);
+                resultDiv.innerHTML = `<p style="color: green;">✅ Backend is working: ${JSON.stringify(data)}</p>`;
+            } catch (error) {
+                console.error('Backend test failed:', error);
+                resultDiv.innerHTML = `<p style="color: red;">❌ Backend test failed: ${error.message}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>

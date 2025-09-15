@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fixed Mood Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">Fixed Mood Test</h1>
+        
+        <div class="bg-white p-4 rounded shadow mb-4">
+            <h2 class="text-lg font-semibold mb-2">Test Mood Tracking</h2>
+            <button id="test-mood" class="bg-blue-500 text-white px-4 py-2 rounded">Test Mood Tracking</button>
+            <div id="result" class="mt-4 p-4 bg-gray-100 rounded hidden"></div>
+        </div>
+
+        <div class="bg-white p-4 rounded shadow">
+            <h2 class="text-lg font-semibold mb-2">Console Log</h2>
+            <div id="console" class="bg-gray-900 text-green-400 p-4 rounded font-mono text-sm h-40 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            console.innerHTML += `[${timestamp}] ${message}\n`;
+            console.scrollTop = console.scrollHeight;
+        }
+
+        document.getElementById('test-mood').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                log('Starting mood tracking test...');
+                
+                // Step 1: Login
+                log('Step 1: Login');
+                const loginResponse = await fetch('http://localhost:8000/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        username: 'qwer',
+                        password: 'password123'
+                    })
+                });
+                
+                if (!loginResponse.ok) {
+                    const errorText = await loginResponse.text();
+                    throw new Error(`Login failed: ${loginResponse.status} - ${errorText}`);
+                }
+                
+                const loginData = await loginResponse.json();
+                log(`Login successful: ${JSON.stringify(loginData)}`);
+                
+                const token = loginData.access_token;
+                
+                // Step 2: Log a mood
+                log('Step 2: Log a mood');
+                const moodLogResponse = await fetch('http://localhost:8000/moods/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        user_id: 'qwer',
+                        mood: 'happy',
+                        note: 'Test mood from fixed test'
+                    })
+                });
+                
+                if (!moodLogResponse.ok) {
+                    const errorText = await moodLogResponse.text();
+                    throw new Error(`Mood logging failed: ${moodLogResponse.status} - ${errorText}`);
+                }
+                
+                const moodLogData = await moodLogResponse.json();
+                log(`Mood logged: ${JSON.stringify(moodLogData)}`);
+                
+                // Step 3: Get mood history
+                log('Step 3: Get mood history');
+                const moodHistoryResponse = await fetch('http://localhost:8000/moods/qwer', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                log(`Mood history status: ${moodHistoryResponse.status}`);
+                
+                if (!moodHistoryResponse.ok) {
+                    const errorText = await moodHistoryResponse.text();
+                    throw new Error(`Mood history failed: ${moodHistoryResponse.status} - ${errorText}`);
+                }
+                
+                const moodHistoryData = await moodHistoryResponse.json();
+                log(`Mood history: ${JSON.stringify(moodHistoryData)}`);
+                
+                resultDiv.className = 'mt-4 p-4 bg-green-100 text-green-800 rounded';
+                resultDiv.innerHTML = `
+                    <p><strong>✅ Mood tracking test successful!</strong></p>
+                    <p>Found ${moodHistoryData.count} mood entries</p>
+                    <p>Check console for details</p>
+                `;
+                
+            } catch (error) {
+                log(`Test failed: ${error.message}`);
+                resultDiv.className = 'mt-4 p-4 bg-red-100 text-red-800 rounded';
+                resultDiv.innerHTML = `
+                    <p><strong>❌ Test failed:</strong></p>
+                    <p>${error.message}</p>
+                    <p>Check console for details</p>
+                `;
+            }
+            
+            resultDiv.classList.remove('hidden');
+        });
+
+        // Initialize
+        log('Fixed mood test page loaded');
+    </script>
+</body>
+</html>

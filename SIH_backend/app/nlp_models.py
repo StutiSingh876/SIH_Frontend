@@ -2,6 +2,39 @@
 NLP Models for Mental Health Detection
 """
 
+import warnings
+import logging
+import os
+import sys
+from contextlib import redirect_stderr, redirect_stdout
+from io import StringIO
+
+# Suppress ALL warnings before importing transformers
+warnings.filterwarnings("ignore")
+os.environ["PYTHONWARNINGS"] = "ignore"
+os.environ["TRANSFORMERS_VERBOSITY"] = "error"
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+# Redirect stderr to suppress transformers output
+class SuppressOutput:
+    def __enter__(self):
+        self._original_stderr = sys.stderr
+        self._original_stdout = sys.stdout
+        sys.stderr = StringIO()
+        sys.stdout = StringIO()
+        return self
+    
+    def __exit__(self, *args):
+        sys.stderr = self._original_stderr
+        sys.stdout = self._original_stdout
+
+# Set logging levels to suppress all transformers output
+logging.getLogger("transformers").setLevel(logging.CRITICAL)
+logging.getLogger("transformers.modeling_utils").setLevel(logging.CRITICAL)
+logging.getLogger("transformers.configuration_utils").setLevel(logging.CRITICAL)
+logging.getLogger("transformers.tokenization_utils").setLevel(logging.CRITICAL)
+logging.getLogger("transformers.modeling_roberta").setLevel(logging.CRITICAL)
+
 import nltk
 from nltk.corpus import wordnet
 from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
@@ -21,26 +54,28 @@ class NLPModels:
             except LookupError:
                 nltk.download('wordnet', quiet=True)
             
-            # Initialize sentiment analysis model
-            self.sentiment_analyzer = pipeline(
-                "sentiment-analysis",
-                model=settings.sentiment_model_name,
-                truncation=settings.truncation,
-                max_length=settings.max_length
-            )
-            
-            # Initialize emotion analysis model
-            self.emotion_analyzer = pipeline(
-                "text-classification",
-                model=settings.emotion_model_name,
-                return_all_scores=False,
-                truncation=settings.truncation,
-                max_length=settings.max_length
-            )
-            
-            # Initialize toxicity detection model
-            self.toxicity_tokenizer = AutoTokenizer.from_pretrained(settings.toxicity_model_name)
-            self.toxicity_model = AutoModelForSequenceClassification.from_pretrained(settings.toxicity_model_name)
+            # Initialize models with output suppression
+            with SuppressOutput():
+                # Initialize sentiment analysis model
+                self.sentiment_analyzer = pipeline(
+                    "sentiment-analysis",
+                    model=settings.sentiment_model_name,
+                    truncation=settings.truncation,
+                    max_length=settings.max_length
+                )
+                
+                # Initialize emotion analysis model
+                self.emotion_analyzer = pipeline(
+                    "text-classification",
+                    model=settings.emotion_model_name,
+                    top_k=1,
+                    truncation=settings.truncation,
+                    max_length=settings.max_length
+                )
+                
+                # Initialize toxicity detection model
+                self.toxicity_tokenizer = AutoTokenizer.from_pretrained(settings.toxicity_model_name)
+                self.toxicity_model = AutoModelForSequenceClassification.from_pretrained(settings.toxicity_model_name)
             
             logger.info("✅ NLP models loaded successfully")
             
@@ -52,8 +87,9 @@ class NLPModels:
     def _load_fallback_models(self):
         """Load fallback models if primary models fail."""
         try:
-            self.sentiment_analyzer = pipeline("sentiment-analysis")
-            self.emotion_analyzer = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base")
+            with SuppressOutput():
+                self.sentiment_analyzer = pipeline("sentiment-analysis")
+                self.emotion_analyzer = pipeline("text-classification", model="j-hartmann/emotion-english-distilroberta-base", top_k=1)
             logger.info("✅ Fallback NLP models loaded")
         except Exception as e:
             logger.error(f"❌ Failed to load fallback models: {e}")

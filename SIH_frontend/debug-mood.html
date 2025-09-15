@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Mood Logging</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/api-client.js"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">Debug Mood Logging</h1>
+        
+        <!-- Test Backend Connection -->
+        <div class="bg-white p-4 rounded shadow mb-4">
+            <h2 class="text-lg font-semibold mb-2">1. Test Backend Connection</h2>
+            <button id="test-backend" class="bg-blue-500 text-white px-4 py-2 rounded">Test Backend</button>
+            <div id="backend-result" class="mt-2 p-2 rounded hidden"></div>
+        </div>
+
+        <!-- Test Registration -->
+        <div class="bg-white p-4 rounded shadow mb-4">
+            <h2 class="text-lg font-semibold mb-2">2. Test Registration</h2>
+            <input type="text" id="reg-username" placeholder="Username" class="w-full p-2 border rounded mb-2">
+            <input type="email" id="reg-email" placeholder="Email" class="w-full p-2 border rounded mb-2">
+            <input type="password" id="reg-password" placeholder="Password" class="w-full p-2 border rounded mb-2">
+            <button id="test-register" class="bg-green-500 text-white px-4 py-2 rounded">Register</button>
+            <div id="register-result" class="mt-2 p-2 rounded hidden"></div>
+        </div>
+
+        <!-- Test Login -->
+        <div class="bg-white p-4 rounded shadow mb-4">
+            <h2 class="text-lg font-semibold mb-2">3. Test Login</h2>
+            <input type="text" id="login-username" placeholder="Username" class="w-full p-2 border rounded mb-2">
+            <input type="password" id="login-password" placeholder="Password" class="w-full p-2 border rounded mb-2">
+            <button id="test-login" class="bg-blue-500 text-white px-4 py-2 rounded">Login</button>
+            <div id="login-result" class="mt-2 p-2 rounded hidden"></div>
+        </div>
+
+        <!-- Test Mood Logging -->
+        <div class="bg-white p-4 rounded shadow mb-4">
+            <h2 class="text-lg font-semibold mb-2">4. Test Mood Logging</h2>
+            <select id="mood-select" class="w-full p-2 border rounded mb-2">
+                <option value="happy">Happy</option>
+                <option value="sad">Sad</option>
+                <option value="excited">Excited</option>
+                <option value="anxious">Anxious</option>
+            </select>
+            <textarea id="mood-note" placeholder="Mood note" class="w-full p-2 border rounded mb-2" rows="3"></textarea>
+            <button id="test-mood" class="bg-purple-500 text-white px-4 py-2 rounded">Log Mood</button>
+            <div id="mood-result" class="mt-2 p-2 rounded hidden"></div>
+        </div>
+
+        <!-- Current User Info -->
+        <div class="bg-white p-4 rounded shadow">
+            <h2 class="text-lg font-semibold mb-2">Current Status</h2>
+            <div id="status-info" class="text-sm text-gray-600">
+                <p>Token: <span id="token-status">Not logged in</span></p>
+                <p>User: <span id="user-status">Not logged in</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        function showResult(elementId, message, isSuccess = true) {
+            const element = document.getElementById(elementId);
+            element.className = `mt-2 p-2 rounded ${isSuccess ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+            element.textContent = message;
+            element.classList.remove('hidden');
+        }
+
+        function updateStatus() {
+            const token = localStorage.getItem('auth_token');
+            const user = localStorage.getItem('current_user');
+            
+            document.getElementById('token-status').textContent = token ? 'Present' : 'Not found';
+            document.getElementById('user-status').textContent = user ? JSON.parse(user).username : 'Not found';
+        }
+
+        // Test Backend Connection
+        document.getElementById('test-backend').addEventListener('click', async () => {
+            try {
+                console.log('Testing backend connection...');
+                const response = await apiClient.healthCheck();
+                showResult('backend-result', `Backend is working! Response: ${JSON.stringify(response)}`, true);
+            } catch (error) {
+                console.error('Backend test failed:', error);
+                showResult('backend-result', `Backend failed: ${error.message}`, false);
+            }
+        });
+
+        // Test Registration
+        document.getElementById('test-register').addEventListener('click', async () => {
+            const username = document.getElementById('reg-username').value;
+            const email = document.getElementById('reg-email').value;
+            const password = document.getElementById('reg-password').value;
+
+            if (!username || !email || !password) {
+                showResult('register-result', 'Please fill all fields', false);
+                return;
+            }
+
+            try {
+                console.log('Testing registration...');
+                const response = await apiClient.register({
+                    username,
+                    email,
+                    password,
+                    full_name: username
+                });
+                showResult('register-result', `Registration successful! Response: ${JSON.stringify(response)}`, true);
+                updateStatus();
+            } catch (error) {
+                console.error('Registration failed:', error);
+                showResult('register-result', `Registration failed: ${error.message}`, false);
+            }
+        });
+
+        // Test Login
+        document.getElementById('test-login').addEventListener('click', async () => {
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+
+            if (!username || !password) {
+                showResult('login-result', 'Please enter username and password', false);
+                return;
+            }
+
+            try {
+                console.log('Testing login...');
+                const response = await apiClient.login({ username, password });
+                showResult('login-result', `Login successful! Token: ${response.access_token ? 'Received' : 'Not received'}`, true);
+                currentUser = username;
+                updateStatus();
+            } catch (error) {
+                console.error('Login failed:', error);
+                showResult('login-result', `Login failed: ${error.message}`, false);
+            }
+        });
+
+        // Test Mood Logging
+        document.getElementById('test-mood').addEventListener('click', async () => {
+            if (!currentUser) {
+                showResult('mood-result', 'Please login first', false);
+                return;
+            }
+
+            const mood = document.getElementById('mood-select').value;
+            const note = document.getElementById('mood-note').value;
+
+            try {
+                console.log('Testing mood logging...');
+                const response = await apiClient.logMood({
+                    user_id: currentUser,
+                    mood: mood,
+                    note: note || null
+                });
+                showResult('mood-result', `Mood logged successfully! Response: ${JSON.stringify(response)}`, true);
+            } catch (error) {
+                console.error('Mood logging failed:', error);
+                showResult('mood-result', `Mood logging failed: ${error.message}`, false);
+            }
+        });
+
+        // Initialize
+        updateStatus();
+    </script>
+</body>
+</html>

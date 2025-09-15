@@ -1,10 +1,10 @@
 # moods.py - Mood Tracking Routes
 
 ## What This File Does
-This file defines API endpoints for mood tracking functionality. It allows users to log their daily moods and retrieve their mood history over time.
+This file defines API endpoints for mood tracking functionality. It allows users to log their daily moods, retrieve their mood history over time, and delete unwanted mood entries.
 
 ## In Simple Terms
-Think of this as a digital mood diary where users can record how they're feeling each day, add notes about their mood, and look back at their emotional patterns over time.
+Think of this as a digital mood diary where users can record how they're feeling each day, add notes about their mood, look back at their emotional patterns over time, and delete entries they no longer want to keep.
 
 ## API Endpoints
 
@@ -77,6 +77,35 @@ Authorization: Bearer <jwt_token>
     "count": 2
 }
 ```
+
+### 3. **DELETE /moods/{mood_id}** - Delete a Mood Log
+```python
+@router.delete("/{mood_id}")
+def delete_mood_log(mood_id: str, current_user: User = Depends(get_current_active_user)):
+```
+**What it does:** Permanently deletes a specific mood entry for the current user
+**Input:** Mood ID in URL path
+**Output:** Confirmation message with deleted mood ID
+**Security:** Requires JWT authentication, user can only delete their own mood logs
+
+**Example Request:**
+```
+DELETE /moods/507f1f77bcf86cd799439011
+Authorization: Bearer <jwt_token>
+```
+
+**Example Response:**
+```json
+{
+    "message": "Mood log deleted successfully ✅",
+    "deleted_id": "507f1f77bcf86cd799439011"
+}
+```
+
+**Error Responses:**
+- `400 Bad Request`: Invalid mood ID format
+- `403 Forbidden`: User trying to delete someone else's mood log
+- `404 Not Found`: Mood log not found or already deleted
 
 ## Mood Types
 

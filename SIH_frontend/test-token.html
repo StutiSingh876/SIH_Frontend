@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/api-client.js"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">Token Test</h1>
+        
+        <div class="bg-white p-4 rounded shadow mb-4">
+            <h2 class="text-lg font-semibold mb-2">Test Token</h2>
+            <button id="test-token" class="bg-blue-500 text-white px-4 py-2 rounded">Test Token</button>
+            <div id="token-result" class="mt-4 p-4 bg-gray-100 rounded hidden"></div>
+        </div>
+
+        <div class="bg-white p-4 rounded shadow">
+            <h2 class="text-lg font-semibold mb-2">Console Log</h2>
+            <div id="console" class="bg-gray-900 text-green-400 p-4 rounded font-mono text-sm h-40 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            console.innerHTML += `[${timestamp}] ${message}\n`;
+            console.scrollTop = console.scrollHeight;
+        }
+
+        document.getElementById('test-token').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('token-result');
+            
+            try {
+                log('Testing token...');
+                
+                // Get current token
+                const token = localStorage.getItem('auth_token');
+                log(`Current token: ${token ? token.substring(0, 50) + '...' : 'None'}`);
+                
+                if (!token) {
+                    throw new Error('No token found. Please login first.');
+                }
+                
+                // Test token with different approaches
+                log('Testing token with fetch...');
+                const response = await fetch('http://localhost:8000/moods/qwer', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                log(`Response status: ${response.status}`);
+                log(`Response headers: ${JSON.stringify([...response.headers.entries()])}`);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`Success: ${JSON.stringify(data)}`);
+                    resultDiv.className = 'mt-4 p-4 bg-green-100 text-green-800 rounded';
+                    resultDiv.textContent = 'Token is valid! Check console for details.';
+                } else {
+                    const errorText = await response.text();
+                    log(`Error: ${errorText}`);
+                    resultDiv.className = 'mt-4 p-4 bg-red-100 text-red-800 rounded';
+                    resultDiv.textContent = `Token error: ${response.status} - ${errorText}`;
+                }
+                
+            } catch (error) {
+                log(`Token test failed: ${error.message}`);
+                resultDiv.className = 'mt-4 p-4 bg-red-100 text-red-800 rounded';
+                resultDiv.textContent = `Token test failed: ${error.message}`;
+            }
+            
+            resultDiv.classList.remove('hidden');
+        });
+
+        // Initialize
+        log('Token test page loaded');
+        log(`Current token: ${localStorage.getItem('auth_token') ? 'Present' : 'Missing'}`);
+    </script>
+</body>
+</html>

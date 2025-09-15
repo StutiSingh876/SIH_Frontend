@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>No Auth Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">No Auth Test</h1>
+        
+        <div class="bg-white p-4 rounded shadow mb-4">
+            <h2 class="text-lg font-semibold mb-2">Test Backend Connection</h2>
+            <button id="test-backend" class="bg-blue-500 text-white px-4 py-2 rounded">Test Backend</button>
+            <div id="result" class="mt-4 p-4 bg-gray-100 rounded hidden"></div>
+        </div>
+
+        <div class="bg-white p-4 rounded shadow">
+            <h2 class="text-lg font-semibold mb-2">Console Log</h2>
+            <div id="console" class="bg-gray-900 text-green-400 p-4 rounded font-mono text-sm h-40 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script>
+        function log(message) {
+            const console = document.getElementById('console');
+            const timestamp = new Date().toLocaleTimeString();
+            console.innerHTML += `[${timestamp}] ${message}\n`;
+            console.scrollTop = console.scrollHeight;
+        }
+
+        document.getElementById('test-backend').addEventListener('click', async () => {
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                log('Testing backend connection...');
+                
+                // Test 1: Basic connection
+                const response = await fetch('http://localhost:8000/');
+                const data = await response.json();
+                log(`Backend response: ${JSON.stringify(data)}`);
+                
+                resultDiv.className = 'mt-4 p-4 bg-green-100 text-green-800 rounded';
+                resultDiv.innerHTML = `
+                    <p><strong>✅ Backend is working!</strong></p>
+                    <p>Response: ${JSON.stringify(data)}</p>
+                `;
+                
+            } catch (error) {
+                log(`Backend test failed: ${error.message}`);
+                resultDiv.className = 'mt-4 p-4 bg-red-100 text-red-800 rounded';
+                resultDiv.innerHTML = `
+                    <p><strong>❌ Backend test failed:</strong></p>
+                    <p>${error.message}</p>
+                    <p>Make sure the backend server is running on port 8000</p>
+                `;
+            }
+            
+            resultDiv.classList.remove('hidden');
+        });
+
+        // Initialize
+        log('No auth test page loaded');
+    </script>
+</body>
+</html>

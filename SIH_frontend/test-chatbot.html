@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Test - SIH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/api-client.js"></script>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="max-w-2xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">Chatbot Integration Test</h1>
+        
+        <div class="bg-white p-6 rounded-lg shadow mb-6">
+            <h2 class="text-lg font-semibold mb-4">Test Chatbot Connection</h2>
+            <button id="test-btn" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                Test Chatbot
+            </button>
+            <div id="result" class="mt-4 p-4 rounded hidden"></div>
+        </div>
+        
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h2 class="text-lg font-semibold mb-4">Quick Chat Test</h2>
+            <div class="space-y-4">
+                <input type="text" id="message-input" placeholder="Type a message..." class="w-full p-3 border rounded">
+                <button id="send-btn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                    Send Message
+                </button>
+                <div id="chat-result" class="mt-4 p-4 rounded hidden"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check authentication
+            if (!authUtils.isLoggedIn()) {
+                document.getElementById('result').innerHTML = '<div class="bg-red-100 text-red-800 p-4 rounded">Please login first to test chatbot</div>';
+                document.getElementById('result').classList.remove('hidden');
+                return;
+            }
+
+            // Test chatbot connection
+            document.getElementById('test-btn').addEventListener('click', async () => {
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = '<div class="bg-blue-100 text-blue-800 p-4 rounded">Testing chatbot connection...</div>';
+                resultDiv.classList.remove('hidden');
+
+                try {
+                    const userData = JSON.parse(localStorage.getItem('current_user'));
+                    const response = await apiClient.sendChatMessage(userData.username, 'Hello, this is a test message');
+                    
+                    resultDiv.innerHTML = `
+                        <div class="bg-green-100 text-green-800 p-4 rounded">
+                            <strong>✅ Chatbot Working!</strong><br>
+                            <strong>Response:</strong> ${response.reply}<br>
+                            <strong>Analysis:</strong> ${response.analysis ? 'Available' : 'None'}
+                        </div>
+                    `;
+                } catch (error) {
+                    resultDiv.innerHTML = `
+                        <div class="bg-red-100 text-red-800 p-4 rounded">
+                            <strong>❌ Error:</strong> ${error.message}
+                        </div>
+                    `;
+                }
+            });
+
+            // Send message test
+            document.getElementById('send-btn').addEventListener('click', async () => {
+                const message = document.getElementById('message-input').value;
+                const resultDiv = document.getElementById('chat-result');
+                
+                if (!message) {
+                    resultDiv.innerHTML = '<div class="bg-yellow-100 text-yellow-800 p-4 rounded">Please enter a message</div>';
+                    resultDiv.classList.remove('hidden');
+                    return;
+                }
+
+                resultDiv.innerHTML = '<div class="bg-blue-100 text-blue-800 p-4 rounded">Sending message...</div>';
+                resultDiv.classList.remove('hidden');
+
+                try {
+                    const userData = JSON.parse(localStorage.getItem('current_user'));
+                    const response = await apiClient.sendChatMessage(userData.username, message);
+                    
+                    resultDiv.innerHTML = `
+                        <div class="bg-green-100 text-green-800 p-4 rounded">
+                            <strong>Bot Response:</strong> ${response.reply}<br>
+                            ${response.analysis ? `<strong>Analysis:</strong> ${JSON.stringify(response.analysis, null, 2)}` : ''}
+                        </div>
+                    `;
+                } catch (error) {
+                    resultDiv.innerHTML = `
+                        <div class="bg-red-100 text-red-800 p-4 rounded">
+                            <strong>Error:</strong> ${error.message}
+                        </div>
+                    `;
+                }
+            });
+        });
+    </script>
+</body>
+</html>

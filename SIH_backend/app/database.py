@@ -3,6 +3,7 @@ from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError, Confi
 import os
 import logging
 from config import MONGODB_URL, LOG_LEVEL
+from app.database_fallback import get_fallback_collection
 
 # Configure logging
 logging.basicConfig(level=getattr(logging, LOG_LEVEL.upper()))
@@ -21,14 +22,18 @@ def connect_to_database():
     global client, db, users_collection, moods_collection, chat_collection, streaks_collection
     
     try:
-        # Create MongoDB client with timeout settings
+        # Create MongoDB client with optimized timeout settings
         client = MongoClient(
             MONGODB_URL,
-            serverSelectionTimeoutMS=5000,  # 5 second timeout
-            connectTimeoutMS=5000,
-            socketTimeoutMS=5000,
+            serverSelectionTimeoutMS=15000,  # 15 second timeout
+            connectTimeoutMS=15000,
+            socketTimeoutMS=15000,
             retryWrites=True,
-            maxPoolSize=10
+            maxPoolSize=5,
+            retryReads=True,
+            maxIdleTimeMS=30000,
+            waitQueueTimeoutMS=10000,
+            heartbeatFrequencyMS=10000
         )
         
         # Test the connection
@@ -46,7 +51,13 @@ def connect_to_database():
         
     except (ConnectionFailure, ServerSelectionTimeoutError, ConfigurationError) as e:
         logger.error(f"❌ MongoDB connection failed: {e}")
-        return False
+        logger.warning("🔄 Falling back to in-memory database for testing")
+        # Initialize fallback collections
+        users_collection = get_fallback_collection("users")
+        moods_collection = get_fallback_collection("moods")
+        chat_collection = get_fallback_collection("chats")
+        streaks_collection = get_fallback_collection("streaks")
+        return True
     except Exception as e:
         logger.error(f"❌ Unexpected database error: {e}")
         return False

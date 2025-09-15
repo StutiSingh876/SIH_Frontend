@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Debug Test</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/api-client.js"></script>
+</head>
+<body class="bg-gray-100 p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">Mood Debug Test</h1>
+        
+        <!-- Step 1: Login -->
+        <div class="bg-white p-4 rounded shadow mb-4">
+            <h2 class="text-lg font-semibold mb-2">Step 1: Login</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="text" id="username" placeholder="Username" class="p-2 border rounded" value="testuser">
+                <input type="password" id="password" placeholder="Password" class="p-2 border rounded" value="password123">
+            </div>
+            <button id="login-btn" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded">Login</button>
+            <div id="login-result" class="mt-2 p-2 rounded hidden"></div>
+        </div>
+
+        <!-- Step 2: Log Mood -->
+        <div class="bg-white p-4 rounded shadow mb-4">
+            <h2 class="text-lg font-semibold mb-2">Step 2: Log Mood</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <select id="mood-select" class="p-2 border rounded">
+                    <option value="happy">Happy</option>
+                    <option value="sad">Sad</option>
+                    <option value="excited">Excited</option>
+                </select>
+                <input type="text" id="mood-note" placeholder="Mood note" class="p-2 border rounded">
+            </div>
+            <button id="log-mood-btn" class="mt-2 bg-green-500 text-white px-4 py-2 rounded">Log Mood</button>
+            <div id="mood-result" class="mt-2 p-2 rounded hidden"></div>
+        </div>
+
+        <!-- Step 3: Get Mood History -->
+        <div class="bg-white p-4 rounded shadow mb-4">
+            <h2 class="text-lg font-semibold mb-2">Step 3: Get Mood History</h2>
+            <button id="get-history-btn" class="bg-purple-500 text-white px-4 py-2 rounded">Get Mood History</button>
+            <div id="history-result" class="mt-2 p-2 rounded hidden"></div>
+            <div id="mood-list" class="mt-4"></div>
+        </div>
+
+        <!-- Console Output -->
+        <div class="bg-white p-4 rounded shadow">
+            <h2 class="text-lg font-semibold mb-2">Console Output</h2>
+            <div id="console-output" class="bg-gray-900 text-green-400 p-4 rounded font-mono text-sm h-40 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        function log(message) {
+            const console = document.getElementById('console-output');
+            const timestamp = new Date().toLocaleTimeString();
+            console.innerHTML += `[${timestamp}] ${message}\n`;
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function showResult(elementId, message, isSuccess = true) {
+            const element = document.getElementById(elementId);
+            element.className = `mt-2 p-2 rounded ${isSuccess ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+            element.textContent = message;
+            element.classList.remove('hidden');
+        }
+
+        // Login
+        document.getElementById('login-btn').addEventListener('click', async () => {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                log(`Attempting login for user: ${username}`);
+                const response = await apiClient.login({ username, password });
+                log(`Login successful: ${JSON.stringify(response)}`);
+                showResult('login-result', 'Login successful!', true);
+                currentUser = username;
+            } catch (error) {
+                log(`Login failed: ${error.message}`);
+                showResult('login-result', `Login failed: ${error.message}`, false);
+            }
+        });
+
+        // Log Mood
+        document.getElementById('log-mood-btn').addEventListener('click', async () => {
+            if (!currentUser) {
+                showResult('mood-result', 'Please login first', false);
+                return;
+            }
+
+            const mood = document.getElementById('mood-select').value;
+            const note = document.getElementById('mood-note').value;
+
+            try {
+                log(`Logging mood: ${mood} for user: ${currentUser}`);
+                const response = await apiClient.logMood({
+                    user_id: currentUser,
+                    mood: mood,
+                    note: note || null
+                });
+                log(`Mood logged successfully: ${JSON.stringify(response)}`);
+                showResult('mood-result', 'Mood logged successfully!', true);
+            } catch (error) {
+                log(`Mood logging failed: ${error.message}`);
+                showResult('mood-result', `Mood logging failed: ${error.message}`, false);
+            }
+        });
+
+        // Get Mood History
+        document.getElementById('get-history-btn').addEventListener('click', async () => {
+            if (!currentUser) {
+                showResult('history-result', 'Please login first', false);
+                return;
+            }
+
+            try {
+                log(`Getting mood history for user: ${currentUser}`);
+                log(`Current token: ${apiClient.token ? 'Present' : 'Missing'}`);
+                
+                // Test with direct fetch first
+                log('Testing with direct fetch...');
+                const directResponse = await fetch(`http://localhost:8000/moods/${currentUser}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiClient.token}`
+                    }
+                });
+                
+                log(`Direct fetch status: ${directResponse.status}`);
+                if (!directResponse.ok) {
+                    const errorText = await directResponse.text();
+                    log(`Direct fetch error: ${errorText}`);
+                    throw new Error(`Direct fetch failed: ${directResponse.status} - ${errorText}`);
+                }
+                
+                const directData = await directResponse.json();
+                log(`Direct fetch data: ${JSON.stringify(directData)}`);
+                
+                // Now try with API client
+                log('Testing with API client...');
+                const response = await apiClient.getMoodHistory(currentUser);
+                log(`Mood history response: ${JSON.stringify(response)}`);
+                
+                if (response.history && response.history.length > 0) {
+                    showResult('history-result', `Found ${response.history.length} mood entries`, true);
+                    
+                    // Display mood list
+                    const moodList = document.getElementById('mood-list');
+                    moodList.innerHTML = response.history.map(entry => `
+                        <div class="bg-gray-100 p-3 rounded mb-2">
+                            <div class="flex justify-between items-center">
+                                <span class="font-medium">${entry.mood}</span>
+                                <span class="text-sm text-gray-500">${new Date(entry.timestamp).toLocaleString()}</span>
+                            </div>
+                            ${entry.note ? `<p class="text-sm text-gray-600 mt-1">${entry.note}</p>` : ''}
+                            <p class="text-xs text-gray-400 mt-1">ID: ${entry._id}</p>
+                        </div>
+                    `).join('');
+                } else {
+                    showResult('history-result', 'No mood entries found', false);
+                    document.getElementById('mood-list').innerHTML = '<p class="text-gray-500">No moods found</p>';
+                }
+            } catch (error) {
+                log(`Mood history failed: ${error.message}`);
+                showResult('history-result', `Mood history failed: ${error.message}`, false);
+            }
+        });
+
+        // Initialize
+        log('Debug page loaded');
+    </script>
+</body>
+</html>

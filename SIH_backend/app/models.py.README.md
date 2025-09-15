@@ -33,6 +33,8 @@ class MoodLog(BaseModel):
     note: Optional[str]  # Optional note about the mood
 ```
 
+**Usage:** Used for creating new mood entries and retrieving mood history. Each mood log gets a unique ID when saved, which can be used to delete the entry later.
+
 **Validation Rules:**
 - `user_id`: Must be 1-50 characters, only letters/numbers/underscores/hyphens
 - `mood`: Must be one of: happy, sad, angry, anxious, excited, calm, stressed, confused, grateful, lonely, content, overwhelmed

@@ -68,8 +68,17 @@ PORT=8000
 
 ### Step 4: Start the Backend Server
 ```bash
+# Make sure you're in the SIH_backend directory
+cd SIH_backend
+
 # Start the FastAPI server with auto-reload
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+**Alternative startup command (if the above doesn't work):**
+```bash
+# From the SIH_backend directory
+python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
 **Expected Output:**
@@ -134,11 +143,39 @@ The test page will automatically:
 3. Verify mood tracking functionality
 4. Test chatbot integration
 
+## 🗑️ Mood Log Deletion Feature
+
+### How to Delete Mood Logs
+The platform now includes the ability to delete mood log entries:
+
+1. **Navigate to Mood Tracker**: Go to http://localhost:3000/MoodTracker.Html
+2. **View Mood History**: Your recent mood entries will be displayed
+3. **Delete a Mood Entry**: 
+   - Look for the trash icon (🗑️) next to each mood entry
+   - Click the trash icon
+   - Confirm deletion in the popup dialog
+   - The mood entry will be permanently removed
+
+### Features of Mood Deletion
+- ✅ **Confirmation Dialog**: Prevents accidental deletions
+- ✅ **Security**: Users can only delete their own mood logs
+- ✅ **Real-time Updates**: Mood history refreshes automatically after deletion
+- ✅ **Visual Feedback**: Success/error messages are displayed
+- ✅ **Loading States**: Visual indicators during deletion process
+
+### API Endpoint
+- **DELETE** `/moods/{mood_id}` - Delete a specific mood log by ID
+- Requires authentication (JWT token)
+- Returns success message or appropriate error codes
+
 ### Step 3: Manual Testing
 1. **Register a new account** at http://localhost:3000/Login.html
 2. **Login** with your credentials
 3. **Navigate to dashboard** (Mitr2.html)
 4. **Test mood tracking** (MoodTracker.Html)
+   - Log different moods with notes
+   - View mood history
+   - **Delete mood entries** using the trash icon (🗑️) next to each entry
 5. **Try the AI chatbot** (chatbot.html)
 6. **Browse the forum** (forum.html)
 
@@ -151,8 +188,17 @@ The test page will automatically:
 ```bash
 # Make sure you're in the SIH_backend directory
 cd SIH_backend
+# Verify you're in the right directory (should see app/ folder)
+ls  # or dir on Windows
 # Then start the server
 uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+**Alternative solution:**
+```bash
+# From the project root (SIH_ps1)
+cd SIH_backend
+python -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
 #### Issue: "Failed to connect to database"
@@ -218,6 +264,14 @@ lsof -ti:3000 | xargs kill -9
 - Check if JWT token is stored in localStorage
 - Try logging out and logging back in
 
+#### Issue: Mood deletion not working
+**Solutions:**
+1. **Delete button not visible**: Make sure you have mood entries in your history
+2. **"Mood log not found" error**: The mood entry may have already been deleted
+3. **Permission denied**: Make sure you're logged in and trying to delete your own mood logs
+4. **Network error**: Check if the backend server is running on port 8000
+5. **Confirmation dialog not appearing**: Check browser console for JavaScript errors
+
 ## 📱 Application URLs
 
 ### Main Application Pages
@@ -277,6 +331,8 @@ You'll know everything is working when:
 ✅ Frontend shows the login page at http://localhost:3000/Login.html
 ✅ Integration tests pass at http://localhost:3000/test-integration.html
 ✅ You can register, login, and use all features without errors
+✅ **Mood deletion works**: You can see trash icons next to mood entries and successfully delete them
+✅ **API documentation** shows the new DELETE `/moods/{mood_id}` endpoint at http://localhost:8000/docs
 
 ---
 

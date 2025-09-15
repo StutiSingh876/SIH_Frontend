@@ -1,58 +1,130 @@
-﻿# SIH Backend - MindCare Mental Health API
+﻿# 🧠 SIH Backend - Mental Health API
 
-## Overview
-This is a comprehensive mental health tracking and support API built with FastAPI. It provides user authentication, mood tracking, AI-powered chatbot support, and advanced natural language processing for mental health detection.
+A simple and powerful backend for student mental health tracking with AI-powered features.
 
-## What This Project Does
-- **User Management**: Register, login, and manage user accounts with secure JWT authentication
-- **Mood Tracking**: Log and track daily moods with notes
-- **AI Chatbot**: Advanced mental health chatbot with state management and emotional analysis
-- **NLP Analysis**: Sentiment analysis, emotion detection, toxicity screening, and distress detection
-- **Gamification**: Streak tracking to encourage consistent mental health check-ins
-- **Risk Assessment**: AI-powered risk scoring based on user's emotional patterns
+## 🚀 What This Does
 
-## Key Features
-- 🔐 Secure JWT-based authentication
-- 🧠 AI-powered mental health analysis
-- 💬 Intelligent chatbot with conversation memory
-- 📊 Mood tracking and analytics
-- 🎯 Gamification with streak tracking
-- 🚨 Urgent distress detection and crisis intervention
-- 📱 RESTful API with comprehensive documentation
+This backend helps students track their mental health by providing:
+- **User accounts** - Sign up and login securely
+- **Mood tracking** - Log daily moods and feelings
+- **🗑️ Mood deletion** - Delete unwanted mood entries with security
+- **AI chatbot** - Talk to an AI that understands mental health
+- **Smart analysis** - AI analyzes your text for emotions and stress
+- **Progress tracking** - See your mental health journey over time
 
-## Technology Stack
-- **Backend**: FastAPI (Python)
-- **Database**: MongoDB
-- **AI/ML**: Transformers, NLTK, PyTorch
-- **Authentication**: JWT with bcrypt password hashing
-- **Documentation**: Auto-generated Swagger/OpenAPI docs
+## 🛠️ Tech Stack
 
-## Quick Start
-1. Install dependencies: `pip install -r requirements.txt`
-2. Set up environment variables (see config.py)
-3. Run the server: `uvicorn app.main:app --reload`
-4. Visit `http://localhost:8000/docs` for API documentation
+- **FastAPI** - Modern Python web framework
+- **MongoDB** - Database to store user data
+- **JWT** - Secure user authentication
+- **AI Models** - Pre-trained models for mental health analysis
 
-## API Endpoints
-- `/auth/*` - User authentication and management
-- `/moods/*` - Mood logging and history
-- `/chatbot/*` - Basic chatbot interactions
-- `/nlp/*` - Advanced AI analysis and mental health detection
-- `/gamify/*` - Streak tracking and gamification
+## 📁 Project Structure
 
-## Security Features
-- Password hashing with bcrypt
-- JWT token authentication
-- User data isolation (users can only access their own data)
-- Input validation and sanitization
-- Comprehensive error handling
+```
+SIH_backend/
+├── app/
+│   ├── main.py              # Main application file
+│   ├── auth.py              # User login/security
+│   ├── database.py          # Database connection
+│   ├── models.py            # Data structures
+│   ├── nlp_services.py      # AI analysis functions
+│   └── routes/              # API endpoints
+│       ├── auth.py          # Login/register
+│       ├── moods.py         # Mood tracking
+│       ├── nlp.py           # AI analysis
+│       └── chatbot.py       # AI chatbot
+├── config.py                # Settings
+└── requirements.txt         # Dependencies
+```
 
-## Mental Health Features
-- Real-time sentiment and emotion analysis
-- Toxicity detection for harmful content
-- Urgent distress detection with crisis intervention
-- Risk assessment based on emotional patterns
-- Intelligent chatbot with conversation memory
-- Comprehensive mental health analytics
+## 🔧 Quick Setup
 
-This API is designed to support mental health applications by providing robust backend services for user management, emotional tracking, and AI-powered mental health support.
+### 1. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+
+### 2. Start the Server
+```bash
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+### 3. Test It Works
+Visit: http://localhost:8000/docs
+
+## 📡 Main API Endpoints
+
+### 🔐 Authentication
+- `POST /auth/register` - Create new account
+- `POST /auth/login` - Login user
+- `GET /auth/me` - Get current user info
+
+### 😊 Mood Tracking
+- `POST /moods/` - Log a mood
+- `GET /moods/{user_id}` - Get mood history
+- `DELETE /moods/{mood_id}` - **Delete a mood log** 🆕
+
+### 🤖 AI Features
+- `POST /nlp/chatbot` - Chat with AI
+- `POST /nlp/sentiment` - Analyze text emotions
+- `POST /nlp/emotion` - Detect emotions
+- `POST /nlp/toxicity` - Check for harmful content
+
+### 🎯 Gamification
+- `POST /gamify/streak/{user_id}` - Update daily streak
+- `GET /gamify/streak/{user_id}` - Get streak info
+
+## 🔒 Security Features
+
+- **Password Protection** - Passwords are encrypted
+- **JWT Tokens** - Secure user sessions
+- **Input Validation** - All data is checked before saving
+- **User Isolation** - Users can only see their own data
+
+## 🧠 AI Features
+
+The backend uses pre-trained AI models to:
+- **Analyze emotions** in text messages
+- **Detect stress** and mental health concerns
+- **Provide smart responses** in the chatbot
+- **Flag harmful content** for safety
+
+## 🌐 Frontend Integration
+
+This backend works with the frontend at `http://localhost:3000`:
+- Login page connects to `/auth/login`
+- Mood tracker saves to `/moods/`
+- Chatbot talks through `/nlp/chatbot`
+
+## 🚨 Important Notes
+
+- **Database**: Uses MongoDB (cloud-hosted)
+- **Port**: Runs on port 8000
+- **Environment**: Development mode by default
+- **CORS**: Enabled for localhost:3000
+
+## 🐛 Troubleshooting
+
+**Server won't start?**
+- Check if port 8000 is free
+- Make sure all dependencies are installed
+
+**Database errors?**
+- Check internet connection (MongoDB is cloud-hosted)
+- Verify MongoDB URL in config.py
+
+**AI features not working?**
+- Models download automatically on first use
+- May take a few minutes to load initially
+
+## 📞 Support
+
+If something breaks:
+1. Check the terminal for error messages
+2. Visit http://localhost:8000/docs for API help
+3. Make sure frontend is running on port 3000
+
+---
+
+**That's it!** This backend makes mental health tracking simple and secure for students. 🎓💚

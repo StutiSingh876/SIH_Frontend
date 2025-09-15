@@ -27,6 +27,12 @@ def get_password_hash(password: str) -> str:
 
 def get_user(username: str) -> Optional[UserInDB]:
     """Get user from database by username."""
+    if users_collection is None:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Database not connected"
+        )
+    
     user_data = users_collection.find_one({"username": username})
     if user_data:
         user_data["id"] = str(user_data["_id"])
@@ -35,12 +41,22 @@ def get_user(username: str) -> Optional[UserInDB]:
 
 def authenticate_user(username: str, password: str) -> Optional[UserInDB]:
     """Authenticate a user by username and password."""
-    user = get_user(username)
-    if not user:
-        return None
-    if not verify_password(password, user.hashed_password):
-        return None
-    return user
+    try:
+        user = get_user(username)
+        if not user:
+            return None
+        if not verify_password(password, user.hashed_password):
+            return None
+        return user
+    except HTTPException:
+        # Re-raise HTTP exceptions (like database not connected)
+        raise
+    except Exception as e:
+        # Handle other exceptions
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Authentication error: {str(e)}"
+        )
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     """Create a JWT access token."""
@@ -56,13 +72,29 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
 def verify_token(token: str) -> Optional[TokenData]:
     """Verify and decode a JWT token."""
     try:
+        print(f"🔍 Verifying token: {token[:50]}...")
+        print(f"🔍 Using SECRET_KEY: {SECRET_KEY[:20]}...")
+        print(f"🔍 Using ALGORITHM: {ALGORITHM}")
+        
+        # Decode without verification first to see the payload
+        unverified_payload = jwt.decode(token, options={"verify_signature": False}, key="")
+        print(f"🔍 Unverified payload: {unverified_payload}")
+        
+        # Now verify the token
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        print(f"🔍 Verified payload: {payload}")
+        
         username: str = payload.get("sub")
         if username is None:
+            print("❌ No 'sub' field in token")
             return None
+        
         token_data = TokenData(username=username)
+        print(f"✅ Token valid for user: {username}")
         return token_data
-    except JWTError:
+    except JWTError as e:
+        print(f"❌ JWT Error: {e}")
+        print(f"❌ Token that failed: {token}")
         return None
 
 async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(security)) -> User:
@@ -73,14 +105,20 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         headers={"WWW-Authenticate": "Bearer"},
     )
     
+    print(f"🔍 Getting current user with credentials: {credentials.credentials[:50]}...")
+    
     token_data = verify_token(credentials.credentials)
     if token_data is None:
+        print("❌ Token validation failed")
         raise credentials_exception
     
+    print(f"🔍 Looking up user: {token_data.username}")
     user = get_user(username=token_data.username)
     if user is None:
+        print(f"❌ User not found: {token_data.username}")
         raise credentials_exception
     
+    print(f"✅ User found: {user.username}")
     return user
 
 async def get_current_active_user(current_user: User = Depends(get_current_user)) -> User:

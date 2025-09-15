@@ -1,3 +1,23 @@
+import warnings
+import logging
+import os
+import sys
+
+# Suppress ALL warnings before importing other modules
+warnings.filterwarnings("ignore")
+os.environ["PYTHONWARNINGS"] = "ignore"
+os.environ["TRANSFORMERS_VERBOSITY"] = "error"
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
+
+# Set logging levels for noisy modules
+logging.getLogger("transformers").setLevel(logging.CRITICAL)
+logging.getLogger("transformers.modeling_utils").setLevel(logging.CRITICAL)
+logging.getLogger("transformers.configuration_utils").setLevel(logging.CRITICAL)
+logging.getLogger("transformers.tokenization_utils").setLevel(logging.CRITICAL)
+logging.getLogger("transformers.modeling_roberta").setLevel(logging.CRITICAL)
+logging.getLogger("torch").setLevel(logging.ERROR)
+logging.getLogger("urllib3").setLevel(logging.WARNING)
+
 from fastapi import FastAPI
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,9 +43,9 @@ app = FastAPI(
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=CORS_ORIGINS,
+    allow_origins=["*"] if ENVIRONMENT == "development" else CORS_ORIGINS,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 

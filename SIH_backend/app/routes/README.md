@@ -13,6 +13,7 @@ This directory contains all the API endpoint definitions for the MindCare mental
 ### 2. **moods.py** - Mood Tracking
 - Log daily moods with notes
 - Retrieve mood history
+- Delete unwanted mood entries 🆕
 - User-specific mood data access
 
 ### 3. **chatbot.py** - Basic Chatbot

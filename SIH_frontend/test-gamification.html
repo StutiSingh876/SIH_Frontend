@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamification Test Suite - SIH Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- API Client and Gamification -->
+    <script src="js/api-client.js"></script>
+    <script src="js/gamification.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .test-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .test-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 8px;
+            transition: transform 0.2s;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+        }
+        .test-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-pass { background-color: #10b981; }
+        .status-fail { background-color: #ef4444; }
+        .status-pending { background-color: #f59e0b; }
+        .log-entry {
+            background: #f8fafc;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin: 4px 0;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .log-success { border-left: 4px solid #10b981; }
+        .log-error { border-left: 4px solid #ef4444; }
+        .log-info { border-left: 4px solid #3b82f6; }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="container mx-auto px-6 py-8">
+        <div class="max-w-6xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-gray-800 mb-4">🎮 Gamification Test Suite</h1>
+                <p class="text-lg text-gray-600">Comprehensive testing for SIH Mental Health Platform gamification features</p>
+            </div>
+
+            <!-- Test Status Overview -->
+            <div class="test-section">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">Test Status Overview</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-blue-600" id="total-tests">0</div>
+                        <div class="text-gray-600">Total Tests</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-green-600" id="passed-tests">0</div>
+                        <div class="text-gray-600">Passed</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-red-600" id="failed-tests">0</div>
+                        <div class="text-gray-600">Failed</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Authentication Test -->
+            <div class="test-section">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                    <span class="status-indicator status-pending" id="auth-status"></span>
+                    Authentication Test
+                </h2>
+                <p class="text-gray-600 mb-4">Test user authentication and token management</p>
+                <button class="test-button" onclick="testAuthentication()">Test Authentication</button>
+                <div id="auth-log" class="mt-4"></div>
+            </div>
+
+            <!-- Backend API Test -->
+            <div class="test-section">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                    <span class="status-indicator status-pending" id="backend-status"></span>
+                    Backend API Test
+                </h2>
+                <p class="text-gray-600 mb-4">Test gamification API endpoints</p>
+                <div class="flex flex-wrap">
+                    <button class="test-button" onclick="testBackendHealth()">Health Check</button>
+                    <button class="test-button" onclick="testXPSystem()">XP System</button>
+                    <button class="test-button" onclick="testAchievements()">Achievements</button>
+                    <button class="test-button" onclick="testProgress()">Progress Tracking</button>
+                </div>
+                <div id="backend-log" class="mt-4"></div>
+            </div>
+
+            <!-- Frontend Integration Test -->
+            <div class="test-section">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                    <span class="status-indicator status-pending" id="frontend-status"></span>
+                    Frontend Integration Test
+                </h2>
+                <p class="text-gray-600 mb-4">Test gamification UI components and interactions</p>
+                <div class="flex flex-wrap">
+                    <button class="test-button" onclick="testGamificationManager()">Gamification Manager</button>
+                    <button class="test-button" onclick="testNotifications()">Notifications</button>
+                    <button class="test-button" onclick="testUIUpdates()">UI Updates</button>
+                </div>
+                <div id="frontend-log" class="mt-4"></div>
+            </div>
+
+            <!-- End-to-End Test -->
+            <div class="test-section">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">
+                    <span class="status-indicator status-pending" id="e2e-status"></span>
+                    End-to-End Test
+                </h2>
+                <p class="text-gray-600 mb-4">Test complete user workflows</p>
+                <div class="flex flex-wrap">
+                    <button class="test-button" onclick="testMoodTracking()">Mood Tracking Flow</button>
+                    <button class="test-button" onclick="testAIChat()">AI Chat Flow</button>
+                    <button class="test-button" onclick="testAchievementUnlock()">Achievement Unlock</button>
+                </div>
+                <div id="e2e-log" class="mt-4"></div>
+            </div>
+
+            <!-- Test Log -->
+            <div class="test-section">
+                <h2 class="text-2xl font-bold text-gray-800 mb-4">Test Log</h2>
+                <div id="test-log" class="max-h-96 overflow-y-auto"></div>
+                <button class="test-button" onclick="clearLog()">Clear Log</button>
+                <button class="test-button" onclick="runAllTests()">Run All Tests</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let testResults = {
+            total: 0,
+            passed: 0,
+            failed: 0
+        };
+
+        // Logging functions
+        function log(message, type = 'info', section = 'general') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry log-${type}`;
+            logEntry.innerHTML = `<span class="text-gray-500">[${timestamp}]</span> ${message}`;
+            
+            const logContainer = document.getElementById(`${section}-log`) || document.getElementById('test-log');
+            logContainer.appendChild(logEntry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function updateTestStatus(section, status) {
+            const indicator = document.getElementById(`${section}-status`);
+            indicator.className = `status-indicator status-${status}`;
+        }
+
+        function updateTestCounts() {
+            document.getElementById('total-tests').textContent = testResults.total;
+            document.getElementById('passed-tests').textContent = testResults.passed;
+            document.getElementById('failed-tests').textContent = testResults.failed;
+        }
+
+        function recordTest(passed) {
+            testResults.total++;
+            if (passed) {
+                testResults.passed++;
+            } else {
+                testResults.failed++;
+            }
+            updateTestCounts();
+        }
+
+        // Test functions
+        async function testAuthentication() {
+            log('Starting authentication test...', 'info', 'auth');
+            updateTestStatus('auth', 'pending');
+            
+            try {
+                const token = localStorage.getItem('auth_token');
+                if (!token) {
+                    throw new Error('No authentication token found');
+                }
+                
+                const user = await window.apiClient.getCurrentUser();
+                if (!user || !user.username) {
+                    throw new Error('Invalid user data');
+                }
+                
+                log(`✅ Authentication successful: ${user.username}`, 'success', 'auth');
+                updateTestStatus('auth', 'pass');
+                recordTest(true);
+            } catch (error) {
+                log(`❌ Authentication failed: ${error.message}`, 'error', 'auth');
+                updateTestStatus('auth', 'fail');
+                recordTest(false);
+            }
+        }
+
+        async function testBackendHealth() {
+            log('Testing backend health...', 'info', 'backend');
+            
+            try {
+                const response = await window.apiClient.healthCheck();
+                if (response.message && response.message.includes('running')) {
+                    log('✅ Backend is running', 'success', 'backend');
+                    recordTest(true);
+                } else {
+                    throw new Error('Unexpected response format');
+                }
+            } catch (error) {
+                log(`❌ Backend health check failed: ${error.message}`, 'error', 'backend');
+                recordTest(false);
+            }
+        }
+
+        async function testXPSystem() {
+            log('Testing XP system...', 'info', 'backend');
+            
+            try {
+                const user = await window.apiClient.getCurrentUser();
+                if (!user) throw new Error('User not authenticated');
+                
+                // Test adding XP
+                const xpResponse = await window.apiClient.addXP(
+                    user.username,
+                    'test_action',
+                    10,
+                    'Test XP addition'
+                );
+                
+                if (xpResponse.xp_added === 10) {
+                    log('✅ XP system working correctly', 'success', 'backend');
+                    recordTest(true);
+                } else {
+                    throw new Error('XP not added correctly');
+                }
+            } catch (error) {
+                log(`❌ XP system test failed: ${error.message}`, 'error', 'backend');
+                recordTest(false);
+            }
+        }
+
+        async function testAchievements() {
+            log('Testing achievements system...', 'info', 'backend');
+            
+            try {
+                const user = await window.apiClient.getCurrentUser();
+                if (!user) throw new Error('User not authenticated');
+                
+                // Test getting achievements
+                const achievements = await window.apiClient.getUserAchievements(user.username);
+                
+                if (achievements && Array.isArray(achievements.achievements)) {
+                    log(`✅ Achievements system working (${achievements.total_achievements} earned)`, 'success', 'backend');
+                    recordTest(true);
+                } else {
+                    throw new Error('Invalid achievements response');
+                }
+            } catch (error) {
+                log(`❌ Achievements test failed: ${error.message}`, 'error', 'backend');
+                recordTest(false);
+            }
+        }
+
+        async function testProgress() {
+            log('Testing progress tracking...', 'info', 'backend');
+            
+            try {
+                const user = await window.apiClient.getCurrentUser();
+                if (!user) throw new Error('User not authenticated');
+                
+                // Test getting progress
+                const progress = await window.apiClient.getUserProgress(user.username);
+                
+                if (progress && typeof progress.xp === 'number' && typeof progress.level === 'number') {
+                    log(`✅ Progress tracking working (Level ${progress.level}, ${progress.xp} XP)`, 'success', 'backend');
+                    recordTest(true);
+                } else {
+                    throw new Error('Invalid progress response');
+                }
+            } catch (error) {
+                log(`❌ Progress tracking test failed: ${error.message}`, 'error', 'backend');
+                recordTest(false);
+            }
+        }
+
+        async function testGamificationManager() {
+            log('Testing gamification manager...', 'info', 'frontend');
+            
+            try {
+                if (!window.gamification) {
+                    throw new Error('Gamification manager not loaded');
+                }
+                
+                // Test initialization
+                await window.gamification.init();
+                
+                if (window.gamification.currentUser) {
+                    log('✅ Gamification manager initialized successfully', 'success', 'frontend');
+                    recordTest(true);
+                } else {
+                    log('⚠️ Gamification manager initialized but no user found', 'info', 'frontend');
+                    recordTest(true); // This is expected if not logged in
+                }
+            } catch (error) {
+                log(`❌ Gamification manager test failed: ${error.message}`, 'error', 'frontend');
+                recordTest(false);
+            }
+        }
+
+        async function testNotifications() {
+            log('Testing notification system...', 'info', 'frontend');
+            
+            try {
+                if (!window.gamification) {
+                    throw new Error('Gamification manager not loaded');
+                }
+                
+                // Test XP notification
+                window.gamification.showXPNotification(10, 'Test notification');
+                
+                // Test achievement notification
+                window.gamification.showAchievementNotification([{
+                    id: 'test_achievement',
+                    name: 'Test Achievement',
+                    description: 'This is a test',
+                    icon: '🎯',
+                    xp_reward: 50
+                }]);
+                
+                log('✅ Notification system working', 'success', 'frontend');
+                recordTest(true);
+            } catch (error) {
+                log(`❌ Notification test failed: ${error.message}`, 'error', 'frontend');
+                recordTest(false);
+            }
+        }
+
+        async function testUIUpdates() {
+            log('Testing UI updates...', 'info', 'frontend');
+            
+            try {
+                if (!window.gamification) {
+                    throw new Error('Gamification manager not loaded');
+                }
+                
+                // Test UI update methods
+                window.gamification.updateXPDisplay();
+                window.gamification.updateLevelDisplay();
+                window.gamification.updateProgressBars();
+                window.gamification.updateAchievementDisplay();
+                
+                log('✅ UI update methods working', 'success', 'frontend');
+                recordTest(true);
+            } catch (error) {
+                log(`❌ UI update test failed: ${error.message}`, 'error', 'frontend');
+                recordTest(false);
+            }
+        }
+
+        async function testMoodTracking() {
+            log('Testing mood tracking flow...', 'info', 'e2e');
+            
+            try {
+                const user = await window.apiClient.getCurrentUser();
+                if (!user) throw new Error('User not authenticated');
+                
+                // Test mood logging
+                const moodData = {
+                    user_id: user.username,
+                    mood: 'happy',
+                    note: 'Test mood for gamification'
+                };
+                
+                const response = await window.apiClient.logMood(moodData);
+                
+                if (response) {
+                    log('✅ Mood tracking flow working', 'success', 'e2e');
+                    recordTest(true);
+                } else {
+                    throw new Error('Mood logging failed');
+                }
+            } catch (error) {
+                log(`❌ Mood tracking test failed: ${error.message}`, 'error', 'e2e');
+                recordTest(false);
+            }
+        }
+
+        async function testAIChat() {
+            log('Testing AI chat flow...', 'info', 'e2e');
+            
+            try {
+                const user = await window.apiClient.getCurrentUser();
+                if (!user) throw new Error('User not authenticated');
+                
+                // Test AI chat
+                const response = await window.apiClient.sendChatMessage(user.username, 'Hello, this is a test message');
+                
+                if (response && response.reply) {
+                    log('✅ AI chat flow working', 'success', 'e2e');
+                    recordTest(true);
+                } else {
+                    throw new Error('AI chat failed');
+                }
+            } catch (error) {
+                log(`❌ AI chat test failed: ${error.message}`, 'error', 'e2e');
+                recordTest(false);
+            }
+        }
+
+        async function testAchievementUnlock() {
+            log('Testing achievement unlock...', 'info', 'e2e');
+            
+            try {
+                const user = await window.apiClient.getCurrentUser();
+                if (!user) throw new Error('User not authenticated');
+                
+                // Test achievement checking
+                const response = await window.apiClient.checkAchievements(user.username);
+                
+                if (response && Array.isArray(response.new_achievements)) {
+                    log(`✅ Achievement unlock working (${response.new_achievements.length} new achievements)`, 'success', 'e2e');
+                    recordTest(true);
+                } else {
+                    throw new Error('Achievement check failed');
+                }
+            } catch (error) {
+                log(`❌ Achievement unlock test failed: ${error.message}`, 'error', 'e2e');
+                recordTest(false);
+            }
+        }
+
+        // Utility functions
+        function clearLog() {
+            document.getElementById('test-log').innerHTML = '';
+            testResults = { total: 0, passed: 0, failed: 0 };
+            updateTestCounts();
+        }
+
+        async function runAllTests() {
+            log('🚀 Starting comprehensive test suite...', 'info', 'general');
+            clearLog();
+            
+            // Run all tests in sequence
+            await testAuthentication();
+            await testBackendHealth();
+            await testXPSystem();
+            await testAchievements();
+            await testProgress();
+            await testGamificationManager();
+            await testNotifications();
+            await testUIUpdates();
+            await testMoodTracking();
+            await testAIChat();
+            await testAchievementUnlock();
+            
+            log(`🏁 Test suite completed! ${testResults.passed}/${testResults.total} tests passed`, 'info', 'general');
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            log('Gamification test suite loaded', 'info', 'general');
+            updateTestCounts();
+        });
+    </script>
+</body>
+</html>

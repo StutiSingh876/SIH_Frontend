@@ -103,13 +103,19 @@
                     const response = await apiClient.healthCheck();
                     resultDiv.className = 'mt-4 p-4 rounded bg-green-100 text-green-800';
                     resultDiv.textContent = `Backend is healthy! Response: ${JSON.stringify(response)}`;
-                    statusSpan.textContent = '✅ Working';
-                    statusSpan.parentElement.querySelector('i').className = 'fas fa-circle text-green-500';
+                    if (statusSpan) {
+                        statusSpan.textContent = '✅ Working';
+                        const icon = statusSpan.parentElement?.querySelector('i');
+                        if (icon) icon.className = 'fas fa-circle text-green-500';
+                    }
                 } catch (error) {
                     resultDiv.className = 'mt-4 p-4 rounded bg-red-100 text-red-800';
                     resultDiv.textContent = `Backend connection failed: ${error.message}`;
-                    statusSpan.textContent = '❌ Failed';
-                    statusSpan.parentElement.querySelector('i').className = 'fas fa-circle text-red-500';
+                    if (statusSpan) {
+                        statusSpan.textContent = '❌ Failed';
+                        const icon = statusSpan.parentElement?.querySelector('i');
+                        if (icon) icon.className = 'fas fa-circle text-red-500';
+                    }
                 }
                 resultDiv.classList.remove('hidden');
             });
